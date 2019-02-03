@@ -1,0 +1,1448 @@
+% !Rnw weave = knitr
+
+\documentclass[8pt]{article}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=2cm,rmargin=2cm} % para los márgenes de la hoja.
+\usepackage{fancyhdr}%Para editar el encabezado de las paginas
+
+\usepackage{amssymb}%paquete para smmbolos matematicos
+\usepackage{amsfonts} % Para smmbolos matematicos
+\usepackage{amsmath}%paquete para smmbolos matematicos
+\usepackage{amsthm} %paquete para smmbolos matematicos
+\usepackage{bbm} %paquete para smmbolos matematicos
+\usepackage[spanish,es-nodecimaldot]{babel}
+% \usepackage[utf8]{inputenc} %Paquete para escribir acentos y otros smmbolos directamente.
+\usepackage[latin1]{inputenc} %Para manejo de acentos y caracteres.
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{color} %para tener mas colores. 
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor} %Paquete para utilizar colores en el texto.
+\usepackage{booktabs}
+\usepackage{array} %para impresisn de tablas.
+\usepackage{multirow} %para agregar multiples filas a las tablas.
+\usepackage{rotating} %para girar encabezados de tablas.
+\usepackage{subfigure}%para agregar subgraficas en cada plot.
+\usepackage{longtable} %para imprimir tablas que ocupan mas de una hoja.
+\usepackage{float}
+\usepackage{etex}
+\usepackage{microtype}
+\reserveinserts{18}
+\usepackage{morefloats}
+\usepackage{multirow}
+\usepackage{babelbib}
+\usepackage[round]{natbib}
+\providecommand{\BIBand}{y}
+\usepackage{subfig} %para poner subfiguras
+\graphicspath{{Img/}} %En qui carpeta estan las imagenes
+\usepackage[nottoc]{tocbibind}
+\usepackage[pdftex,
+pdfauthor={Alejandra Lelo de Larrea Ibarra},
+pdftitle={Tarea 2},
+pdfsubject={Series de Tiempo},
+pdfkeywords={Maestria Ciencia de Datos, Series de Tiempo},
+pdfproducer={Latex con hyperref},
+pdfcreator={pdflatex}]{hyperref}
+
+\title{\vspace{-1cm}Series de Tiempo \\ Proyecto Final}
+\author{Alejandra Lelo de Larrea Ibarra $\qquad$ c.u. 000124433\\
+Victor Quintero  Mármol González $\qquad$ c.u. 000175897}
+\date{15 de mayo, 2018.}
+
+% Numerar subsubsecciones e incluirlas en el mndice 
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+% Cambiar el nombre de la lista de figuras y tablas.
+\renewcommand{\listfigurename}{\'Indice de figuras}
+\renewcommand{\listtablename}{\'Indice de tablas}
+
+\renewcommand{\proofname}{Demostraci\'on}
+\renewcommand{\tablename}{Tabla}
+
+% Los teoremas, corolarios, lemas y proposiciones comparten el contador de teorema
+\newtheorem{teorema}{Teorema}[section] 
+\newtheorem{corolario}[teorema]{Corolario}
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{prop}[teorema]{Proposicion}
+
+
+% Las definiciones tienen su propio contador
+\theoremstyle{definition}
+\newtheorem{chapter}{Chapter}[section]
+\newtheorem{definicion}{Definici\'on}[chapter]
+%\renewcommand\thedefinicion{\thechapter--\arabic{definicion}}
+\renewcommand\thedefinicion{\arabic{definicion}}
+
+%\theoremstyle{remark}
+%\newtheorem{obs}[teorema]{Observacisn}
+
+\newcommand{\twopartdef}[4]{
+\left\{
+\begin{array}{ll}
+#1 & \mbox{si } #2 \\
+#3 & \mbox{si } #4
+\end{array}
+\right.
+}
+
+\newcommand{\twopartdefeoc}[4]
+{
+\left\{
+\begin{array}{ll}
+#1 & \mbox{si } #2 \\
+#3 & \mbox{e.o.c. } #4
+\end{array}
+\right.
+}
+
+\newcommand{\threepartdef}[6]
+{
+\left\{
+\begin{array}{ll}
+#1 & \mbox{si } #2 \\
+#3 & \mbox{si } #4 \\
+#5 & \mbox{si } #6
+\end{array}
+\right.
+}
+%\providecommand{\norm}[1]{\lVert#1\rVert} %Provee el comando para producir una norma.
+%\providecommand{\innp}[1]{\langle#1\rangle} 
+%\newcommand{\seno}{\mathrm{sen}}
+%\newcommand{\diff}{\mathrm{d}}
+
+%\allowdisplaybreaks
+\begin{document}
+\maketitle
+
+<<setup, echo=FALSE,message=FALSE,warning=FALSE>>=
+
+# Directorio de trabajo
+setwd('E:/ITAM Maestría/Primavera 2018/Series de Tiempo/Proyecto Final')
+
+# # Instalamos librerias
+# install.packages("tidyverse") # Para manipulacion y visualizacion de datos
+# install.packages("DT") # Para editar tablas
+# install.packages("Hmisc") # Para editar digitos en tablas 
+# install.packages("plotly") # Para graficas interactivas
+# install.packages("pastecs") # Para estadísticas descriptivas
+# install.packages("knitr") # Para editar tablas y otros. 
+# install.packages("ggpubr") # para gráficas
+# install.packages("xtable") # para editar gráficas
+# install.packages("astsa")
+# install.packages("forecast") # para series de tiempo
+# install.packages("dlm")# modelos dinamicos lineales
+
+# Cargamos librerias
+library(tidyverse) # Para manipulacion y visualizacion de datos
+
+library(DT) # Para editar tablas
+
+# library(Hmisc) # Para editar digitos en tablas 
+
+# library(plotly) # Para graficas interactivas
+
+library(pastecs) # Para estadísticas descriptivas
+
+library(knitr) # Para editar tablas y otros. 
+
+library(ggpubr) # para gráficas
+
+library(xtable) # para editar gráficas
+
+library(astsa)
+
+library(forecast) # para series de tiempo
+
+library(dlm) # modelos dinamicos lineales
+@
+
+<<edicionTexto,echo=FALSE, message=FALSE,warning=FALSE>>=
+
+# Footnote graficas
+# Nota: el valor de y modifica la posición en eje vertical. Va aumentando conforme se quiera tener más arriba el footnote de la grafica. 
+makeFootnote1 <- function(footnoteText,
+                          size=0.6, color='black',xpos=325,ypos=0)
+{
+  require(grid)
+  pushViewport(viewport())
+  grid.text(label= footnoteText ,
+            x=unit(xpos,"mm")-unit(1,"npc"),
+            y= unit(ypos, "mm"),
+            just=c("left", "bottom"),
+            gp=gpar(cex= size, col=color),
+            check.overlap=TRUE)
+  popViewport()
+}
+
+
+# Se crea una función para que los números menores a un limite se impriman en color color1 (rojo por default) 
+# y los mayores en color2 (negro por default).
+colorTexto <- function(x,lim,color1='red',color2='black'){
+  ifelse(x<lim,
+         paste("\\color{",color1,"}{", formatC(x, dig=3, format="f"), "}"),
+         paste("\\color{",color2,"}{", formatC(x, dig=3, format="f"), "}"))
+}
+
+# Se crea una función de dos variables para que el valor de y correspondiente a valores de x menores a un limite
+# en se impriman en color color1 (rojo por default) y los valores de y correspondientes a valores mayores a un limite 
+# en x se impriman en color2 (negro por default).
+colorTexto2 <- function(x,y,lim,color1='red',color2='black'){
+  ifelse(x<lim,
+         paste("\\color{",color1,"}{", formatC(y, dig=3, format="f"), "}"),
+         paste("\\color{",color2,"}{", formatC(y, dig=3, format="f"), "}"))
+}
+
+
+
+colorCorrel<- function(x, lim){
+  ifelse(x>=lim & x<1,paste("\\color{red}{", formatC(x, dig=2, format="f"), "}"), 
+         ifelse(x>-1 & x<=-lim,paste("\\color{red}{", formatC(x, dig=2, format="f"), "}"),
+                paste("\\color{black}{", formatC(x, dig=2, format="f"), "}")))
+}
+
+
+# Se crea una función para que los números se priman con una cantidad nDigits de dígitos. 
+digitos <- function(x,nDigits=2){
+  ifelse(x<0,
+         paste("\\color{black}{", formatC(x, dig=nDigits, format="f"), "}"),
+         paste("\\color{black}{", formatC(x, dig=nDigits, format="f"), "}"))
+}
+
+
+# Se crea la función para obtener el Significance Code.
+Significancia1 <- function(x){
+  ifelse(x<0.001,
+         paste("\\color{black}{***}"),
+         ifelse(x<0.01, 
+                paste("\\color{black}{**}"),
+                ifelse(x<0.05,
+                       paste("\\color{black}{*}"),
+                       ifelse(x<0.1,
+                              paste("\\color{black}{.}"),
+                              paste("\\color{white}{***}")))))
+}
+
+# Se crea la función para obtener el Significance Code con dos variables.
+Significancia2 <- function(x,y){
+  ifelse(x<0.001,
+         paste(formatC(y, dig=3, format="f"),"\\color{black}{***}"),
+         ifelse(x<0.01,
+                paste(formatC(y, dig=3, format="f"),"\\color{black}{**}"),
+                ifelse(x<0.05,
+                       paste(formatC(y, dig=3, format="f"),"\\color{black}{*}"),
+                       ifelse(x<0.1,
+                              paste(formatC(y, dig=3, format="f"),"\\color{black}{.}"),
+                              paste(formatC(y, dig=3, format="f"),"\\color{white}{***}")))))
+}
+
+
+# Se fija el color azul banxico
+azulBanxico<-rgb(24,43,71,maxColorValue=255)
+grisGraficas<-rgb(71,71,71,maxColorValue=255)
+
+@
+
+\section{Introducción}
+
+Se tienen datos de la cantidad de Monóxido de Carbono (CO) promedio en partículas por millón (ppm) para la Ciudad de México desde 1995. De acuerdo con la norma vigente (NOM-021-SSA1-1993) se establece un límite para la concentración en el medio ambiente de 11 ppm para un promedio de 8 horas.\\
+
+La medición de este componente del aire es relevante en temas de salud, pues puede causar afectaciones al corazón o al cerebro y es consierada uno de los tipos más comúnes de envenenamiento ya que inhabilita el transporte de oxígeno a las células. Además, también es relevante en temas de políticas públicas. Por ejemplo, el nivel del CO es uno de los indicadores para definir si la calidad del aire es óptima o no y por ende declarar contignencias ambientales. La SEDEMA considera los siguientes parámetros:\footnote{Recuperado de: http://www.aire.cdmx.gob.mx/default.php}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l|c}
+\hline
+\textbf{Calidad} & \textbf{Rango CO}\\
+\hline
+Buena & 0.00-5.50\\
+Regular & 5.51-11.00\\
+Mala & 11.01-16.50\\
+Muy Mala & 16.51-22.00 \\
+Extremadamente Mala & $>$22.00\\
+\hline
+\end{tabular}
+\end{table}
+
+
+El objetivo de este trabjo es ajustar distintos modelos clásicos (ARIMA's o SARIMA's), así como un Modelo Dinámico Lineal (DLM) para posteriormente comprar el desempeño de ambas metodologías. \\
+
+\section{Datos}
+
+<<datos,echo=FALSE, cache=TRUE,warning=FALSE,message=FALSE>>=
+
+# Leemos los datos 
+datos<-read.csv("CO.csv",header=TRUE)
+
+# Tansformamos algunas variables 
+# datos$day<-as.numeric(substring(datos$dt,1,2))
+datos$month<-as.numeric(substring(datos$dt,4,5))
+datos$year<-as.numeric(substring(datos$dt,7,10))
+
+# FIjamos el año de inicio de los datos. 
+anioi<-1995
+mesi<-1
+aniof<-2017
+mesf<-12
+
+anioi2<-2008 
+
+# Recortamos la serie 
+datos<-filter(datos,year>=anioi)
+
+# Agregamos los datos mensualmente
+datos2<-aggregate(datos$CO_prom,by=list(month=datos$month,year=datos$year), FUN=mean, na.rm=TRUE)
+colnames(datos2)[ncol(datos2)]<-"CO_prom"
+
+# Agregamos un índice
+datos2$id<-1:nrow(datos2)
+
+# # Completamos los datos faltantes con interpolación lineal
+# datos2$CO_prom<-na.interp(datos2$CO_prom)
+
+# Convertimos a serie de tiempo
+CO<-ts(datos2$CO_prom,start=c(anioi,mesi),frequency=12)
+
+@
+
+De la Secretaría del Medio Ambiente (SEDEMA) se obtuvieron los datos del nivel de CO por hora en la Ciudad de México. Para facilitar la estimación y visualización de los modelos, se agregan los datos mensualmente de tal manera que la serie con la que se trabajará contiene \Sexpr{nrow(datos2)} observaciones correspondientes al promedio mensual de CO de enero de \Sexpr{anioi} a diciembre del \Sexpr{aniof}. \\
+
+La figura \ref{fig:Grafica_datos} muestra la serie de tiempo del CO antes descrita, mientras que la figura \ref{fig:Grafica_datos_zoom} hace un ``zoom'' a los últimos 10 años. Como se puede ver, la serie tiene una tendencia decreciente y una componente estacional pues las máximas concentraciones de CO se tienen en los meses de diciembre y enero, mientras que las más bajas concentraciones se tienen el los meses de junio y julo. Esto hace sentido pues durante el invierno se quema mayor cantidad de combustible y, por lo tanto, se genera mayor concentración de este gas que en el verano. Además, la serie parece tener cambios en la varianza.\\
+
+<<Grafica_datos,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Histórico del promedio mensual de Monóxido de Carbono en la Ciudad de México.'>>=
+
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(CO,col='blue',main="Monóxido de Carbono ",xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+
+@
+
+<<Grafica_datos_zoom,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Promedio mensual del Monóxido de Carbono para el periodo ene 2008 - dic 2017.'>>=
+
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(CO,xlim=c(anioi2,aniof+1-(1/12)),col='blue',lwd=2,main="Monóxido de Carbono, periodo 2008-2017",xaxt="n",xlab="",ylab="",ylim=c(min(CO[match(anioi2,time(CO)):length(time(CO))]),max(CO[match(anioi2,time(CO)):length(time(CO))])))
+
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+abline(v=anioi2:(aniof+1),col="red",lty=2)
+
+@
+
+Para tratar de eliminar los cambios en la varianza, la figura \ref{fig:Grafica_datos_log} muestra el logaritmo del Monóxido de Carbono (Log-CO) para la serie completa, mientras que la figura \ref{fig:Grafica_datos_log_zoom} muestra el Log-CO para los últimos 10 años. Se puede ver que la varianza es más homogénea y que persisten la tendencía, así como la estacionalidad de la serie.\\ 
+
+<<datos_log,echo=FALSE, cache=TRUE, dependson=c('datos')>>=
+
+# Sacamos logaritmo (nota: no hay valores negativos)
+CO<-log(CO)
+
+@
+
+<<Grafica_datos_log,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Histórico del promedio mensual del logaritmo del Monóxido de Carbono en México.'>>=
+# Graficamos el logaritmo
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(CO,col='blue',main="Log-CO",xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+@
+
+<<Grafica_datos_log_zoom,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Promedio mensual del logaritmo del Monóxido de Carbono para el periodo ene 2008 - dic 2017.'>>=
+
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(CO,xlim=c(anioi2,aniof-1/12),col='blue',lwd=2,main="Log-CO, periodo 2008-2017",xaxt="n",xlab="",ylab="",ylim=c(min(CO[match(anioi2,time(CO)):length(time(CO))]),max(CO[match(anioi2,time(CO)):length(time(CO))])))
+axis(1,anioi2:(aniof+1),paste("ene-",anioi2:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+abline(v=anioi2:(aniof+1),col="red",lty=2)
+
+@
+
+La figura \ref{fig:ACF_PACF} muestra el ACF y PACF de los datos. El ACF tiene varios rezagos significativos y muestra el comportamiento de una serie con componente estacional. Por su parte el PACF tiene algunos rezagos significativos pero se corta rápidamente.\\
+
+<<ACF_PACF,echo=FALSE,cache=TRUE,dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=4,fig.cap='ACF y PACF de la serie del logaritmo del Monóxido de Carbono.'>>=
+
+par(mfrow=c(1,2))
+par(mar=c(3.1,3.1,3.1,1.1))
+acf(CO,lag.max=length(CO),main="ACF para el Log-CO",xlab="Rezago",ylab="")
+pacf(CO,lag.max=length(CO),main="PACF para el Log-CO",xlab="Rezago",ylab="")
+
+@
+
+Para eliminar la estacionalidad y la tendencia diferenciamos la serie. La figura \ref{fig:Grafica_datos_dif} muestra la serie del Log-CO diferenciada de primer orden. Como se puede observar, la tendencia se ha eliminado. Sin embargo, al hacer ``zoom'' en la figura \ref{fig:Grafica_datos_dif_zoom} se puede notar que todavía existe un componente estacional. \\
+
+<<Dif_CO,echo=FALSE, cache=TRUE,dependson=c('datos')>>=
+
+diff_CO<-diff(CO)
+
+@
+
+<<Grafica_datos_dif,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Histórico de la diferencia en el promedio mensual del logaritmo del Monóxido de Carbono en México.'>>=
+
+par(mfrow=c(1,1))
+
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(diff_CO,col='blue',main=expression(paste(Delta,"Log-CO",sep="")),xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+
+@
+
+<<Grafica_datos_dif_zoom,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Primer diferencia del promedio mensual del logaritmo del Monóxido de Carbono para el periodo ene 2008 - dic 2017.'>>=
+
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(diff_CO,xlim=c(anioi2,aniof+1-1/12),ylim=c(min(diff_CO[match(anioi2,time(diff_CO)):match(aniof+1-1/12,time(diff_CO))]),max(diff_CO[match(anioi2,time(diff_CO)):match(aniof+1-1/12,time(diff_CO))])),col='blue',lwd=2,main=expression(paste(Delta,"Log-CO, periodo 2008-2017",sep="")),xaxt="n",xlab="",ylab="")
+axis(1,anioi2:(aniof+1),paste("ene-",anioi2:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+abline(v=anioi2:(aniof+1),col="red")
+
+@
+
+El ACF y el PACF de la serie diferenciada se muestran en la figura \ref{fig:ACF_PACF_dif}. Si bien ya se eliminó el patrón estacional que mostraba el ACF, sigue habiendo rezagos significativos que parecen decrecer con el tiempo. En cuanto al PACF, ésta sigue mostrando algunos rezagos significativos que se cortan rápidamente después de 12 rezagos. \\
+
+<<ACF_PACF_dif,echo=FALSE,cache=TRUE,dependson=c('Dif_CO'),fig.pos='H',fig.width=10,fig.height=4,fig.cap='ACF y PACF de la primer diferencia del promedio mensual del logaritmo del Monóxido de Carbono.'>>=
+
+par(mfrow=c(1,2))
+par(mar=c(3.1,3.1,3.1,1.1))
+
+acf(diff_CO,lag.max=120,main=expression(paste("ACF para ",Delta,"Log-CO",sep="")))
+pacf(diff_CO,lag.max=120,main=expression(paste("PACF para ",Delta,"Log-CO",sep="")))
+@
+
+Para terminar de eliminar la estacionalidad, diferenciamos de orden 12 la serie diferenciada de orden 1 pues lo datos son mensuales. La figura \ref{fig:Grafica_datos_dif2} muestra que la serie ya no presenta tendencia ni estacionalidad; sin embargo, todavía persisten algunos cambios en la varianza hacia el final de la serie.\\
+
+<<Dif2_CO,echo=FALSE, cache=TRUE,dependson=c('Dif_CO')>>=
+
+diff2_CO<-diff(diff_CO,12)
+
+@
+
+<<Grafica_datos_dif2,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5,fig.cap='Histórico de la diferencia de orden 12 de la diferencia en el promedio mensual del logarítmo del Monóxido de Carbono en México.'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(diff2_CO,col='blue',main=expression(paste(Delta[12],Delta,"Log-CO ",sep="")),xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+abline(h=0,col='gray20',lty=2,lwd=2)
+@
+
+La figura \ref{fig:ACF_PACF_dif2} muestra el ACF y PACF de esta última serie. El ACF se corta después del rezago 12 aproximadamente y muestra un valor significativo en el rezago 108 (aproximadamente). La PACF se corta después de 36 rezagos (o podría decrecer exponencialmente). Esto nos hace pensar que un modelo SARIMA(p,d,q)(P,D,Q$)_s$ es buena opción para ajustar la serie o bien, un Modelo Dinámico Lineal polinomial de orden 2 con estacionalidad. \\
+
+<<ACF_PACF_dif2,echo=FALSE,cache=TRUE,dependson=c('Dif_CO'),fig.pos='H',fig.width=10,fig.height=4,fig.cap='ACF y PACF para la serie $\\Delta_{12}\\Delta Log-CO$ promedio mensual.'>>=
+
+par(mfrow=c(1,2))
+acf(diff2_CO,lag.max=365,main=expression(paste("ACF para ",Delta[12],Delta,"Log-CO",sep="")))
+pacf(diff2_CO,lag.max=365,main=expression(paste("PACF para ",Delta[12],Delta,"Log-CO",sep="")))
+
+@
+
+% ################################################################################################################
+% ################################################################################################################
+% Modelos Clásicos
+% ################################################################################################################
+% ################################################################################################################
+\section{Modelos Clásicos}
+
+\subsection{Selección de Modelos}
+
+De la sección anterior se puede ver que dentro de los modelos clásicos un SARIMA(p,d,q)$\times$(P,D,Q$)_s$ es una buena opción para intentar ajustar un modelo a los datos del Log-CO. Es claro que los parámetros correspondientes a las diferencias (d y D) deben ser iguales a uno y que la periodicidad (s) debe ser igual a 12. Sin embargo, no es tan claro el valor que deben tomar los parámetros p, q, P y Q. \\
+
+Por ello, creamos una función para estimar distintos modelos SARIMA(p,d,q)$\times$(P,D,Q$)_s$. Se hace una búsqueda exhaustiva en grid con código en paralelo en R tomando todos los modelos que surgen de las posibles combinaciones de los siguientes valores para cada parámetro: 
+
+\begin{itemize}
+\item $p=1, 2, 3, 4, 5$
+\item $d=1$ 
+\item $q=1, 2, 3, 4, 5$
+\item $P=1, 2, 3, 4, 5$
+\item $D=1$
+\item $Q=1, 2, 3, 4, 5$
+\item $s=12$
+\end{itemize}
+
+<<Modelos_SARIMA_Grid_Paralelo,echo=FALSE, eval=FALSE, include=FALSE, cache=TRUE, dependson=('datos'),warning=FALSE,results='asis'>>=
+
+# Función para modelar SARIMA
+mod_Sarima<-function(datos){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      mod<-NA
+      
+    }
+    
+    mod
+    
+  }
+  
+  fun_out
+  
+}
+
+
+# Se fijan parámetros 
+params<-list(p=0:5,
+             d=1,
+             q=0:5,
+             P=0:5,
+             D=1,
+             Q=0:5,
+             s=12)%>%expand.grid
+
+
+# Evaulamos el modelo en los datos 
+modelo_CO<-mod_Sarima(CO)
+
+params<-params %>%
+  mutate(modelo=pmap(.,modelo_CO))%>%
+  mutate(LogLike=map(modelo,eval_loglike))%>%
+  mutate(AIC=map(modelo,eval_aic))%>%
+  mutate(LjungBox=map(modelo,eval_LjungBox))
+
+result_modelos<-params%>%
+  select(p,d,q,P,D,Q,s,LogLike,AIC)%>%
+  unnest%>%
+  arrange(AIC)
+
+# Se fijan parámetros 
+params<-list(p=0:5,
+             d=1,
+             q=0:5,
+             P=0:5,
+             D=1,
+             Q=0:5,
+             s=12)%>%expand.grid
+
+# Contamos el tiempo de máquina
+t<-Sys.time()
+
+# Codigo en paralelo
+no_cores <- detectCores() - 1
+clust <- makeCluster(no_cores)
+registerDoParallel(clust)
+
+results<-foreach(i=1:nrow(params),.combine=rbind) %dopar%{
+  
+  mod<-mod_Sarima(p=params[i,1],d=params[i,2],q=params[i,3],P=params[i,4],D=params[i,5],Q=params[i,6],s=params[i,7])
+  
+  if(is.na(mod)){
+    
+    (data.frame(p=params$p[i],d=params$d[i],q=params$q[i],P=params$P[i],D=params$D[i],Q=params$Q[i],s=params$s[i],Verosim=NA,AIC=NA,LjungBox=NA))
+    
+  }else{
+    Verosim<-mod$loglik
+    AIC<-mod$aic
+    LjungBox<-Box.test(mod$residuals,lag=log(length(mod$residuals)))$p.value
+    
+    (data.frame(p=params$p[i],d=params$d[i],q=params$q[i],P=params$P[i],D=params$D[i],Q=params$Q[i],s=params$s[i],Verosim=Verosim,AIC=AIC,LjungBox=LjungBox))
+  }
+  
+}
+
+stopImplicitCluster()
+stopCluster(clust)
+t<-Sys.time()-t
+
+results<-results%>%
+  as_data_frame%>%
+  arrange(AIC)
+
+@
+
+<<Tabla_Modelos_SARIMA_Grid_Paralelo,echo=FALSE, cache=TRUE, dependson=('datos'),message=FALSE,warning=FALSE,results='asis'>>=
+
+# Correr el código en paralelo tarda mucho de cualquier forma. 
+# Importamos el CSV con los resultados del servidor BANXICO
+# result<-read.csv("E:/ITAM Maestría/Primavera 2018/Series de Tiempo/Proyecto Final/results_grid_SARIMA.csv")
+result<-read.csv("E:/ITAM Maestría/Primavera 2018/Series de Tiempo/Proyecto Final/results_grid_SARIMA_logs.csv")
+
+
+# Edición tabla. 
+result_modelos_tabla<-as.matrix(result[,-ncol(result)])
+
+for(i in 1:7){
+  result_modelos_tabla[,i]<-digitos(as.numeric(as.character(result_modelos_tabla[,i])),nDigits=0)
+}
+
+result_modelos_tabla[,8:9]<-digitos(as.numeric(as.character(result_modelos_tabla[,8:9])),nDigits=4)
+
+result_modelos_tabla<-xtable(result_modelos_tabla,caption="Comparación de AIC's para modelos SARIMA(p,d,q)x(P,D,Q)s",label="tabla:comparacionARIMA")
+
+# Se alínean las columnas 
+align(result_modelos_tabla)<-"lrrr|rrrr|rr"
+
+# Se agregan los encabezados
+addtorow<-list()
+addtorow$pos<-list(0,0)
+addtorow$command<-c("\\multicolumn{7}{c|}{\\textbf{Modelo}} & \\multicolumn{2}{c}{\\textbf{Criterio}} \\\\\n",
+                    "\\hline \\textbf{p} & \\textbf{d} & \\textbf{q} & \\textbf{P} & \\textbf{D} & \\textbf{Q} & \\textbf{s} & \\textbf{Log-Like.} & \\textbf{AIC}  \\\\\n")
+
+print(result_modelos_tabla[1:30,],print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =FALSE, add.to.row=addtorow, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(result_modelos_tabla[1:30,])),scalebox=0.85,sanitize.text.function = function(x) x)
+
+@
+
+En total se ajustaron \Sexpr{nrow(result)} modelos; de los cuales \Sexpr{length(which(is.na(result$AIC)))} no pudieron ser estimados con la función \textit{arima} de R. Los modelos resultantes, se ordenaron de acuerdo con el valor AIC obtenido. La tabla \ref{tabla:comparacionARIMA} muestra los parámetros, la verosimilitud y el AIC únicamente para los 30 modelos con menor AIC. De éstos, se eligen los 5 primeros para competir y realizar las pruebas de diagnóstico. Es decir, se validará la estimación de los siguientes modelos:
+
+\begin{center}
+\begin{tabular}{ll}
+Modelo 1: & $SARIMA(\Sexpr{result$p[1]},\Sexpr{result$d[1]},\Sexpr{result$q[1]})X(\Sexpr{result$P[1]},\Sexpr{result$D[1]},\Sexpr{result$Q[1]})_{\Sexpr{result$s[1]}}$ \\
+Modelo 2: & $SARIMA(\Sexpr{result$p[2]},\Sexpr{result$d[2]},\Sexpr{result$q[2]})X(\Sexpr{result$P[2]},\Sexpr{result$D[2]},\Sexpr{result$Q[2]})_{\Sexpr{result$s[2]}}$  \\
+Modelo 3: & $SARIMA(\Sexpr{result$p[3]},\Sexpr{result$d[3]},\Sexpr{result$q[3]})X(\Sexpr{result$P[3]},\Sexpr{result$D[3]},\Sexpr{result$Q[3]})_{\Sexpr{result$s[3]}}$  \\
+Modelo 4: & $SARIMA(\Sexpr{result$p[4]},\Sexpr{result$d[4]},\Sexpr{result$q[4]})X(\Sexpr{result$P[4]},\Sexpr{result$D[4]},\Sexpr{result$Q[4]})_{\Sexpr{result$s[4]}}$  \\
+Modelo 5: & $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$  \\
+\end{tabular}
+\end{center}
+
+Se puede notar que los mejores modelos tienen parametros de orden chico para la parte estacional (P=1 y Q=1 en 4 de los 5 modelos), pero para la parte no estacional sí se obtuvieron modelos con parámetros AR y MA más grandes. El valor del AIC es muy similar entre los 5 modelos; sin embargo, hay mayor variabilidad en el valor de la verosimilitud. \\
+
+\subsection{Diagnóstico de Residuales}
+
+<<Prueba_LjungBox,echo=FALSE, cache=TRUE, dependson=('datos'),warning=FALSE,results='asis'>>=
+
+LjungBox<-result%>%
+  select(p,d,q,P,D,Q,s,AIC,LjungBox)%>%
+  arrange(AIC)%>%
+  select(-c(AIC))
+
+
+LjungBox_tabla<-as.matrix(LjungBox)
+
+LjungBox_tabla[,8]<-digitos(as.numeric(LjungBox_tabla[,8]),nDigits=4)
+
+LjungBox_tabla<-xtable(LjungBox_tabla,caption="Resultados de la prueba Ljung-Box para modelos SARIMA(p,d,q)x(P,D,Q)s",label="tabla:comparacionLjungBox")
+
+# Se alínean las columnas 
+align(LjungBox_tabla)<-"lrrr|rrrr|r"
+
+# Se agregan los encabezados
+addtorow<-list()
+addtorow$pos<-list(0,0)
+addtorow$command<-c("\\multicolumn{7}{c|}{\\textbf{Modelo}} & \\multicolumn{1}{c}{\\textbf{Ljung-Box}} \\\\\n",
+                    "\\hline \\textbf{p} & \\textbf{d} & \\textbf{q} & \\textbf{P} & \\textbf{D} & \\textbf{Q} & \\textbf{s} & \\textbf{valor-p}  \\\\\n")
+
+print(LjungBox_tabla[1:5,],print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =FALSE, add.to.row=addtorow, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(LjungBox_tabla[1:5,])),scalebox=0.9,sanitize.text.function = function(x) x)
+
+@
+
+Para los 5 modelos seleccionados se realizan los diagnósticos de los residuales. Primero se obtiene la prueba Ljung-Box para ver si los resiudales están o no correlacionados entre si. Como se muestra en la tabla \ref{tabla:comparacionLjungBox}, los cinco modelos pasan la prueba; por lo tanto, no hay evidencia de errores autocorrelacionados.\\ 
+
+La figura \ref{fig:ACF&PACF_Resid} muestra el ACF y PACF para los residuales de los 5 modelos. Todos los modelos tienen rezagos de los residuales no significativos para la ACF. Sin embargo, para la PACF se tiene un rezago ``marginalmente'' significativo (el rezago 48) en los modelos 2, 3 y 4. Dependiendo del resto de los diagnósticos podría pasarse por alto este indicador.\\
+
+Por su parte, la figura \ref{fig:Hist_QQ_Resid} muestra el histograma de los residuales, el histograma de una normal simulada para cada modelo y sus respectivos Q-Q plots. La distribución de los residuales parecen tener cola derecha ligeramente más pesada que los de una normal en los cinco casos. Además, nuevamente los modelos 2, 3 y 4 parecen ser aquellos para los que el histograma de los residuales es más distinto al histograma de una normal simulada. Los Q-Q plots de los 5 modelos muestran mayor diferencia respecto a la línea de $45^{\circ}$ en la cola derecha.  \\
+
+<<ACF&PACF_Resid,echo=FALSE, cache=TRUE,dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=13,fig.cap='ACF y PACF para los residuales de cada modelo.'>>=
+
+# Función para modelar SARIMA
+mod_Sarima<-function(datos){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      NA
+      
+    }
+    
+    mod
+    
+  }
+  
+  fun_out
+  
+}
+
+# Se fijan parámetros 
+params<-data.frame(p=result$p[1:5],
+                   d=result$d[1:5],
+                   q=result$q[1:5],
+                   P=result$P[1:5],
+                   D=result$D[1:5],
+                   Q=result$Q[1:5],
+                   s=result$s[1:5])
+
+
+# Evaulamos el modelo en los datos 
+modelo_CO<-mod_Sarima(CO)
+
+params<-params %>%
+  mutate(modelo=pmap(.,modelo_CO))
+
+
+par(mfrow=c(5,2))
+
+acf(params$modelo[[1]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[1]]$arma[1],",",params$modelo[[1]]$arma[6],",",params$modelo[[1]]$arma[2],")x(",params$modelo[[1]]$arma[3],",",params$modelo[[1]]$arma[7],",",params$modelo[[1]]$arma[4],")_",params$modelo[[1]]$arma[5],sep=""))
+pacf(params$modelo[[1]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[1]]$arma[1],",",params$modelo[[1]]$arma[6],",",params$modelo[[1]]$arma[2],")x(",params$modelo[[1]]$arma[3],",",params$modelo[[1]]$arma[7],",",params$modelo[[1]]$arma[4],")_",params$modelo[[1]]$arma[5],sep=""))
+
+acf(params$modelo[[2]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[2]]$arma[1],",",params$modelo[[2]]$arma[6],",",params$modelo[[2]]$arma[2],")x(",params$modelo[[2]]$arma[3],",",params$modelo[[2]]$arma[7],",",params$modelo[[2]]$arma[4],")_",params$modelo[[2]]$arma[5],sep=""))
+pacf(params$modelo[[2]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[2]]$arma[1],",",params$modelo[[2]]$arma[6],",",params$modelo[[2]]$arma[2],")x(",params$modelo[[2]]$arma[3],",",params$modelo[[2]]$arma[7],",",params$modelo[[2]]$arma[4],")_",params$modelo[[2]]$arma[5],sep=""))
+
+acf(params$modelo[[3]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[3]]$arma[1],",",params$modelo[[3]]$arma[6],",",params$modelo[[3]]$arma[2],")x(",params$modelo[[3]]$arma[3],",",params$modelo[[3]]$arma[7],",",params$modelo[[3]]$arma[4],")_",params$modelo[[3]]$arma[5],sep=""))
+pacf(params$modelo[[3]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[3]]$arma[1],",",params$modelo[[3]]$arma[6],",",params$modelo[[3]]$arma[2],")x(",params$modelo[[3]]$arma[3],",",params$modelo[[3]]$arma[7],",",params$modelo[[3]]$arma[4],")_",params$modelo[[3]]$arma[5],sep=""))
+
+acf(params$modelo[[4]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[4]]$arma[1],",",params$modelo[[4]]$arma[6],",",params$modelo[[4]]$arma[2],")x(",params$modelo[[4]]$arma[3],",",params$modelo[[4]]$arma[7],",",params$modelo[[4]]$arma[4],")_",params$modelo[[4]]$arma[5],sep=""))
+pacf(params$modelo[[4]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[4]]$arma[1],",",params$modelo[[4]]$arma[6],",",params$modelo[[4]]$arma[2],")x(",params$modelo[[4]]$arma[3],",",params$modelo[[4]]$arma[7],",",params$modelo[[4]]$arma[4],")_",params$modelo[[4]]$arma[5],sep=""))
+
+acf(params$modelo[[5]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[5]]$arma[1],",",params$modelo[[5]]$arma[6],",",params$modelo[[5]]$arma[2],")x(",params$modelo[[5]]$arma[3],",",params$modelo[[5]]$arma[7],",",params$modelo[[5]]$arma[4],")_",params$modelo[[5]]$arma[5],sep=""))
+pacf(params$modelo[[5]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[5]]$arma[1],",",params$modelo[[5]]$arma[6],",",params$modelo[[5]]$arma[2],")x(",params$modelo[[5]]$arma[3],",",params$modelo[[5]]$arma[7],",",params$modelo[[5]]$arma[4],")_",params$modelo[[5]]$arma[5],sep=""))
+
+
+@
+
+<<Hist_QQ_Resid,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=13,fig.cap='Histograma y Q-Q Plot para los residuales de cada modelo.'>>=
+
+par(mfrow=c(5,3))
+
+crea_hist<-function(modelo){                   
+  
+  h<-hist(modelo$residuals,prob=TRUE,breaks=25,col='lightblue',main=paste("Residuales SARIMA(",modelo$arma[1],",",modelo$arma[6],",",modelo$arma[2],")x(",modelo$arma[3],",",modelo$arma[7],",",modelo$arma[4],")_",modelo$arma[5],sep=""),xlab="Residuales")
+
+  lines(density(modelo$residuals), col="darkblue", lwd=2)
+  
+}
+
+crea_hist_norm<-function(modelo){                 
+  
+  set.seed(2454)
+  
+  norm.sim<- rnorm(length(modelo$residuals),sd=sqrt(modelo$sigma2))
+  hist(norm.sim, prob=TRUE, col="lightblue", breaks = 25, main= "Normal Simulada",xlab="Valores Simulados")
+  lines(density(norm.sim), lwd=2,col='darkblue')
+}
+
+crea_qqplot<-function(modelo){                   
+  
+  norm.sim<-rnorm(length(modelo$residuals),sd=sqrt(modelo$sigma2))
+  
+  qqplot(norm.sim,modelo$residuals,main=paste("Q-Q Plot de los Residuales SARIMA(",modelo$arma[1],",",modelo$arma[6],",",modelo$arma[2],")x(",modelo$arma[3],",",modelo$arma[7],",",modelo$arma[4],")_",modelo$arma[5],sep=""),xlab="Normal",ylab="Residuales")
+  abline(a=0,b=1,col="red")
+  
+  # qqnorm(modelo$residuals,main=paste("Q-Q Plot de los Residuales SARIMA(",modelo$arma[1],",",modelo$arma[6],",",modelo$arma[2],")x(",modelo$arma[3],",",modelo$arma[7],",",modelo$arma[4],")_",modelo$arma[5],sep=""))
+  # qqline(modelo$residuals,col='olivedrab')
+  
+}
+
+
+crea_hist(params$modelo[[1]])
+crea_hist_norm(params$modelo[[1]])
+crea_qqplot(params$modelo[[1]])
+
+crea_hist(params$modelo[[2]])
+crea_hist_norm(params$modelo[[2]])
+crea_qqplot(params$modelo[[2]])
+
+crea_hist(params$modelo[[3]])
+crea_hist_norm(params$modelo[[3]])
+crea_qqplot(params$modelo[[3]])
+
+crea_hist(params$modelo[[4]])
+crea_hist_norm(params$modelo[[4]])
+crea_qqplot(params$modelo[[4]])
+
+crea_hist(params$modelo[[5]])
+crea_hist_norm(params$modelo[[5]])
+crea_qqplot(params$modelo[[5]])
+
+
+@
+
+
+\subsection{ECM para predicciones}
+
+Por último, para evaluar la calidad de los modelos planteados, se reserva el 20\% final de la muestra para calcular el Error Cuadrático Medio (ECM) de las predicciones realizadas por cada uno. En la tabla \ref{tabla:comparacionECM} se puede observar que todos los modelos presentan un ECM muy pequeño de aproximadamente 0.014, pero es el primer modelo ($SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})\times(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$) el que da el menor ECM para las predicciones del Log-CO. Cabe destacar que la diferencia en ECM entre el primer y quinto modelo es muy pequeña, pero el quinto modelo tiene 2 parámetros menos a estimar que el primero. \\
+
+<<prediccion,echo=FALSE,cache=TRUE,dependson=c('datos','Tabla_Modelos_SARIMA_Grid_Paralelo'),warning=FALSE, message=FALSE,results='asis'>>=
+
+# observaciones 
+c<-round(length(CO)*0.8)
+
+CO.80<-CO[1:c]
+CO.20<-CO[(c+1):length(CO)]
+
+mod_Sarima_predict<-function(datos.80,datos.20){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos.80,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      ECM<-NA
+      
+    }else{
+      
+      pred_values<-predict(mod,n.ahead=length(datos.20))
+      
+      ECM<-mean((datos.20-pred_values$pred)^2)
+    }
+    as.numeric(ECM)
+    
+  }
+  
+  fun_out
+  
+}
+
+params2<-data.frame(p=result$p[1:5],
+                    d=result$d[1:5],
+                    q=result$q[1:5],
+                    P=result$P[1:5],
+                    D=result$D[1:5],
+                    Q=result$Q[1:5],
+                    s=result$s[1:5])
+
+modelo_CO_predict<-mod_Sarima_predict(CO.80,CO.20)
+
+params2<-params2 %>%
+  mutate(ECM=pmap(.,modelo_CO_predict))
+
+
+result2<-params2%>%
+  select(p,d,q,P,D,Q,s,ECM)%>%
+  unnest
+
+
+result_tabla2<-result2
+result_tabla2$ECM<-digitos(as.numeric(result_tabla2$ECM),nDigits=6)
+
+result_tabla2<-xtable(result_tabla2,caption="Comparación ECM's para modelos SARIMA(p,d,q)X(P,D,Q)_s",label="tabla:comparacionECM")
+
+# Se alinean las columnas 
+align(result_tabla2)<-"lrrrrrrr|r"
+
+# Se agregan los encabezados
+addtorow<-list()
+addtorow$pos<-list(0,0)
+addtorow$command<-c("\\multicolumn{7}{c|}{\\textbf{Modelo}} & \\multicolumn{1}{c}{\\textbf{Criterio}} \\\\\n",
+                    "\\hline \\textbf{p} & \\textbf{d} & \\textbf{q} & \\textbf{P} & \\textbf{D} & \\textbf{Q} & \\textbf{s} & \\textbf{ECM} \\\\\n")
+
+print(result_tabla2,print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =FALSE, add.to.row=addtorow, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(result_tabla2)),scalebox=0.9,sanitize.text.function = function(x) x)
+
+@
+
+<<Grafica_prediccion,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=7,fig.height=6,fig.cap='Valores observados vs predicciones para cada modelo para el periodo 2008-2017.'>>=
+
+mod_Sarima_predict2<-function(datos.80,datos.20){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos.80,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      NA
+      
+    }else{
+      
+      mod
+      
+    }
+  }
+  
+  fun_out
+}
+
+plot_Sarima_predict<-function(mod,datos.80,datos.20){
+  
+  aux<-time(ts(c(datos.80,datos.20),start=c(anioi,mesi),frequency=12))
+  datos<-data_frame(Id=1:length(c(datos.80,datos.20)),
+                    Obs=c(datos.80,datos.20),
+                    Pred=c(rep(NA,length(datos.80)),predict(mod,n.ahead=length(datos.20))$pred))
+  
+  datos<-gather(datos,Tipo,CO,Obs:Pred)
+  
+  datos<-filter(datos,Id>=match(anioi2,aux))
+  
+  ggplot(datos,aes(x=Id,y=CO,color=Tipo))+theme_bw()+
+    ggtitle(paste("Residuales SARIMA(",mod$arma[1],",",mod$arma[6],",",mod$arma[2],")x(",mod$arma[3],",",mod$arma[7],",",mod$arma[4],")_",mod$arma[5],sep=""))+
+    ylab("Log-CO")+
+    geom_line()+
+    theme(plot.title = element_text(hjust=0.5,size=8))+
+    labs(color = "",xlab="") +
+    scale_color_manual(labels = c("Observado", "Predicción"), values = c("royalblue1", "firebrick1"))+
+    scale_x_continuous(name="",breaks=seq(from=match(anioi2,aux),to=max(unique(datos$Id)),by=12),labels=paste("ene-",anioi2:aniof,sep=""))+
+    theme(axis.text.x=element_text(angle=90,size=8),
+          axis.text.y=element_text(size=6))
+  
+}
+
+params3<-data.frame(p=result$p[1:5],
+                    d=result$d[1:5],
+                    q=result$q[1:5],
+                    P=result$P[1:5],
+                    D=result$D[1:5],
+                    Q=result$Q[1:5],
+                    s=result$s[1:5])
+
+mod_CO_pred2<-mod_Sarima_predict2(CO.80,CO.20)
+
+params3<-params3 %>%
+  mutate(mod=pmap(.,mod_CO_pred2))
+
+q1<-plot_Sarima_predict(params3$mod[[1]],CO.80,CO.20) 
+q2<-plot_Sarima_predict(params3$mod[[2]],CO.80,CO.20) 
+q3<-plot_Sarima_predict(params3$mod[[3]],CO.80,CO.20) 
+q4<-plot_Sarima_predict(params3$mod[[4]],CO.80,CO.20) 
+q5<-plot_Sarima_predict(params3$mod[[5]],CO.80,CO.20) 
+
+
+# Se imprimen las gráficas de forma conjunta con leyenda compartida. 
+ggarrange(q1,q2,q3,q4,q5,nrow=3,ncol=2, common.legend = TRUE, legend = "bottom")
+
+@
+
+Por su parte, la figura \ref{fig:Grafica_prediccion} muestra la serie observada (azul) y los valores pronosticados para el 20\% final de la muestra (rojo). Los 5 modelos reproducen de manera correcta la estacionalidad de la serie pero subestiman ligeramente los valles salvo por el final del 2017.\\
+
+\subsection{Elección de Modelo SARIMA}
+
+<<Estim_Params_ModFinal, echo=FALSE,cache=TRUE, dependson=c('Tabla_Modelos_SARIMA_Grid_Paralelo')>>=
+
+coef<-params3$mod[[5]]$coef
+
+coef2<-round(c(1,1+coef[3],-(1+coef[3]),-coef[3],coef[3],1,coef[1],coef[2],coef[4],coef[1]*coef[4],coef[2]*coef[4],coef[5],coef[1]*coef[5],coef[2]*coef[5]),4)
+
+signo<-ifelse(sign(coef2)==1,"+",
+              ifelse(sign(coef2)==0,"","-"))
+
+coef3<-paste(signo,abs(coef2),sep="")
+
+@
+
+Tomando en consideración las gráficas del ACF, PACF, el AIC, el análisis de residuales y el ECM obtenidos en las secciones anteriores; y manteniendo en la mira la idea de tener un modelo parsimonioso, se decide utilizar el quinto modelo como el mejor modelo para ajustar los datos; ya que de los únicos dos modelos que pasaron todas las pruebas de los residuales (modelos 1 y 5), es el que tiene menor número de parámetros a estimar y la diferencia en ECM no es significativa. Esto es, los datos del Log-CO se van a modelar con un $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ el cual tiene 6 parámetros a estimar (incluyendo el valor de $\sigma^2$). De esta manera, se tiene que el modelo final está dado por: 
+\begin{equation*}
+(1-\Phi_1B^{12})(1-B)(1-B^{12})CO_t=(1+\theta_1B+\theta_2B^{2})(1+\Theta_1B^{12}+\Theta_2B^{24})Z_t,
+\end{equation*}
+
+o bien, si desarrollamos los polinomios: 
+\begin{eqnarray}\nonumber
+CO_t&=&CO_{t-1}+(1-\Phi_1)CO_{t-12}-(1+\Phi_1)CO_{t-13}-\Phi_1CO_{t-24}+\Phi_1CO_{t-25}\\\nonumber
+&&\quad +Z_t+\theta_1 Z_{t-1}+\theta_2 Z_{t-2}+\Theta_1Z_{t-12}+\theta_1\Theta_1Z_{t-13}\\
+&&\quad +\theta_2\Theta_1Z_{t-14}+\Theta_2Z_{t-24}+\theta_1\Theta_2Z_{t-25}+\theta_2\Theta_2Z_{t-26}\label{modSarimaGral}
+\end{eqnarray}
+
+donde $Z_t$ es ruido blanco con media cero y varianza $\sigma^2$. Los valores estimados para los parámetros son:
+\begin{itemize}
+\item $\theta_1=\Sexpr{round(coef[1],4)}$
+\item $\theta_2=\Sexpr{round(coef[2],4)}$
+\item $\Phi_1=\Sexpr{round(coef[3],4)}$
+\item $\Theta_1=\Sexpr{round(coef[4],4)}$
+\item $\Theta_2=\Sexpr{round(coef[5],4)}$
+\item $\sigma^2=\Sexpr{round(params3$mod[[5]]$sigma2,4)}$
+\end{itemize}
+\bigskip
+
+De esta manera, sustituyendo el valor de los parámetros en \eqref{modSarimaGral}, se tiene que el mejor modelo SARIMA es
+\begin{eqnarray}\nonumber
+CO_t&=&CO_{t-1}\Sexpr{coef3[2]}CO_{t-12}\Sexpr{coef3[3]}CO_{t-13}\Sexpr{coef3[4]}CO_{t-24}\Sexpr{coef3[5]}CO_{t-25}\\\nonumber
+&&\quad +Z_t\Sexpr{coef3[7]}Z_{t-1}\Sexpr{coef3[8]} Z_{t-2}\Sexpr{coef3[9]}Z_{t-12}\Sexpr{coef3[10]}Z_{t-13}\Sexpr{coef3[11]}Z_{t-14}+\Sexpr{coef3[12]}Z_{t-24}\\
+&&\quad \Sexpr{coef3[13]}Z_{t-25}\Sexpr{coef3[14]}Z_{t-26}\label{modSARIMA}
+\end{eqnarray}
+
+donde $Z_t$ es ruido blanco con media cero y varianza $\sigma^2=\Sexpr{round(params3$mod[[4]]$sigma2,4)}$.
+
+
+% ################################################################################################################
+% ################################################################################################################
+% DLM 
+% ################################################################################################################
+% ################################################################################################################
+\section{Modelo Dinámico Lineal}
+
+Si se quiere estimar un Modelo Dinámico Lineal para el Log-CO, de la gráfica \ref{fig:Grafica_datos_log} se ve que se necesita un DLM polinomial de segundo orden junto con un DLM estacional. Para el DLM polinomial se tiene el siguiente modelo Espacio-Estado:
+\begin{eqnarray}\nonumber
+Y_t^{(1)}&=&A_1X_t^{(1)}+V_t^{(1)}\\
+X_{t+1}^{(1)}&=&G_1X_t{(1)}+W_t^{(1)}\label{eq:DLM1}
+\end{eqnarray*}
+
+donde $A_1=[1,0]$, $V_t^{(1)}=V^{(1)}$, $W_t^{(1)}=diag(W_1,W_2)$ y $G_1=
+\begin{bmatrix}
+1 & 1\\
+0 & 1\\
+\end{bmatrix}
+$.
+\bigskip
+
+Por su parte, para el DLM estacional con periodo $s=12$, se tiene el siguiente modelo Espacio-Estado:
+
+\begin{eqnarray}\nonumber
+Y_t^{(2)}&=&A_2X_t^{(2)}+V_t^{(2)}\\
+X_{t+1}^{(2)}&=&G_2X_t{(2)}+W_t^{(2)}\label{eq:DLM2}
+\end{eqnarray*}
+
+donde $A_2=[1,\mathbold{0_{1x10}}]$, $V_t^{(2)}=0$, $W_t^{(2)}=diag(\sigma^2_W,\mathbold{0_{1x10}})$ y $G_2=\begin{bmatrix}- \mathbbm{1}_{10\times 10} & 0\\
+I_{10\times 10} & 0_{10\times 1}\\
+\end{bmatrix}$. 
+\bigskip
+
+
+La serie del Log-CO se estimará mediante un DLM que combine los dos modelos Espacio-Estado mencionados anteriormente.\\
+
+\subsection{Estimación de varianzas Máximo-verosímiles}
+
+<<V&W_MVE, echo=FALSE, cache=TRUE, dependson=c('datos') >>=
+
+# Agregamos un DLM polinomial y un DLM estacional 
+dlm_CO<-dlmModPoly(2,dW=c(1,1),dV=1) + dlmModSeas(12, dV = 0)
+
+# Creamos la función para encontrar los parametros maximo verosimiles
+buildFun<-function(param){
+  
+  diag(W(dlm_CO))[1:3]<-exp(param[1:3])
+  V(dlm_CO)<-exp(param[4])
+  return(dlm_CO)
+
+  }
+
+# Encontramos los parametros maximo verosimiles
+fit<-dlmMLE(CO, parm=rep(0,4),build=buildFun)
+
+# Checamos convergencia 
+conver<-paste("Convergencia", fit$convergence==0)
+
+# Sacamos laexpoenncial a los estimadores encontrados de V y W.
+mod_dlm<-buildFun(fit$par)
+
+# Enseñamos los parametros estimados
+V_MVE<-buildFun(fit$par)[c("V","W")]$V
+W_MVE<-buildFun(fit$par)[c("V","W")]$W
+@
+
+<<Comparacion_DLM_StructTS, echo=FALSE, eval=FALSE, include=FALSE, cache=TRUE, dependson=c('datos') >>=
+
+# #Comparamos con la función struct
+# CO.struct<-StructTS(CO,type="BSM")
+# CO.struct
+@
+
+El primer paso es estimar los valores máximo verosímiles de las matrices V y W en ambos DLM'S. Después de revisar la convergencia, se obtienen los siguientes estimadores: 
+\begin{itemize}
+\item $\hat{V}^{(1)}=\Sexpr{round(V_MVE,4)}$
+\item $\hat{W}_1=\Sexpr{round(W_MVE[1,1],4)}$
+\item $\hat{W}_2=\Sexpr{round(W_MVE[2,2],4)}$
+\item $\hat{\sigma}^2_W=\Sexpr{round(W_MVE[3,3],4)}$.
+\end{itemize}
+
+Una vez conocidas las estimaciones de las matrices V y W se puede proceder a estimar el filtrado, suavizado y la predicción del modelo DLM.\\
+
+\subsection{Filtrado}
+
+Utilizando la función \textit{dlmFilter} se obtiene el filtrado para el Log-CO. La figura \ref{fig:Grafica_Edos_Filtrado} muestra la serie filtrada para los tres estados: nivel, pendiente y estacionalidad. Se sabe que una pequeña desventaja del Filtro de Kalman es que es sensible a condiciones iniciales; este efecto se puede notar en que el inicio de los tres estados está alejado del valor promedio de la serie. Sin embargo, el filtro corrige rápidamente las trayectorias. El nivel sigue muy de cerca la dinámica de la serie observada. La pendiente decrece a lo largo de los primeros dos años y después se mantiene relativamente constante. De igual manera, la dinámica de la componente estacional parece mantenerse constante a lo largo de la muestra.\\
+
+<<Filtrado,echo=FALSE,cache=TRUE, dependson=c('datos','V&W_MVE')>>=
+
+# Filtramos el modelo 
+mod_dlm_filter<-dlmFilter(CO,mod_dlm)
+
+@
+
+<<Grafica_Edos_Filtrado,echo=FALSE, cache=TRUE, dependson=c('Filtrado'),fig.pos='H',fig.width=10,fig.height=10,fig.cap='Serie de tiempo de los vectores de estado filtrados.'>>=
+
+# Graficamos el filtrado.
+# Nota: La salida "m" contiene los valores filrados para el vector de estados 
+# la serie empieza una unidad antes de la primer observación. 
+par(mfrow=c(3,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+# plot(CO,col="firebrick1",xlab="",ylab="Nivel",lwd=3,main="Filtrado CO")
+# lines(ts(mod_dlm_filter$m[-1,1],start=1986,frequency=12),col="firebrick1",lty=2,lwd=2)
+
+plot(ts(mod_dlm_filter$m[-1,1],start=c(anioi,1),frequency=12),col="firebrick1",xaxt="n",xlab="",ylab="",lwd=2,main="Nivel Log-CO Filtrado")
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_filter$m[-1,2],start=c(anioi,1),frequency=12),col="firebrick1",xaxt="n",xlab="",ylab="",main="Pendiente Log-CO Filtrado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_filter$m[-1,3],start=anioi,frequency=12),col="firebrick1",xaxt="n",xlab="",ylab="",main="Estacionalidad Log-CO Filtrado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+
+# Comparamos con structts
+# plot(cbind(fitted(CO.struct)))
+@
+
+Las figuras \ref{fig:Grafica_SerievsFiltro} y \ref{fig:Grafica_SerievsFiltro_Zoom} muestran la serie observada del Log-CO junto con la serie filtrada para la muestra completa y para los últimos 10 años. Como se esperaba, se puede observar una variabilidad mucho menor en la serie filtrada que en la observada, esto debido principalmente a que el cociente $V^{(1)}/W_1$ es grande ($V^{(1)}/W_1=\Sexpr{round(V_MVE/W_MVE[1,1],2)}$).\\
+
+
+<<Grafica_SerievsFiltro,echo=FALSE, cache=TRUE, dependson=c('datos','Filtrado'),fig.pos='H',fig.widht=10,fig.height=3.5,fig.cap='Serie Observada vs. Serie Filtrada'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(CO,col="royalblue1",xaxt="n",xlab="",ylab="",main="Log-CO")
+lines(ts(mod_dlm_filter$m[-1,1],start=c(anioi,1),frequency=12),col="firebrick1",lty=2,lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8,cex.lab=0.8)
+axis(2,cex.axis=0.8,cex.lab=0.8)
+
+leyenda<-c("Observado","Filtrado")
+legend("topright",leyenda,col=c('royalblue1','firebrick1'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+
+@
+
+<<Grafica_SerievsFiltro_Zoom, echo=FALSE, cache=TRUE, dependson=c('datos','Filtrado'),fig.pos='H',fig.widht=10,fig.height=3.5,fig.cap='Serie Observada vs. Serie Filtrada para el periodo 2008-2017'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(ts(CO[which(time(CO)==anioi2):length(CO)],start=c(anioi2,1),frequency=12),col="royalblue1",xaxt="n",xlab="",ylab="",main="Log-CO, periodo 2008-2017")
+lines(ts(mod_dlm_filter$m[(which(time(CO)==2008)+1):length(CO),1],start=c(anioi2,1),frequency=12),col="firebrick1",lty=2,lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8,cex.lab=0.8)
+axis(2,cex.axis=0.8,cex.lab=0.8)
+
+leyenda<-c("Observado","Filtrado")
+legend("topright",leyenda,col=c('royalblue1','firebrick1'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+@
+
+\clearpage
+\subsection{Suavizado}
+
+<<Suavizado, echo=FALSE, cache=TRUE, dependson=c('datos','Filtrado')>>=
+
+# Estimamos la serie suavizada 
+mod_dlm_smooth<-dlmSmooth(CO,mod_dlm)
+
+@
+
+<<Grafica_Estados_Suavizado,echo=FALSE, cache=TRUE, dependson=c('datos','Suavizado'), fig.pos='H',fig.widht=10,fig.height=7,fig.cap='Serie de tiempo de los vectores de estado suavizados.'>>=
+
+# Graficamos el suavizado.
+# Nota: La salida "s" contiene los valores suavizados para el vector de estados 
+# la serie empieza una unidad antes de la primer observación. 
+par(mfrow=c(3,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(ts(mod_dlm_smooth$s[-1,1],start=c(anioi,mesi),frequency=12),col="olivedrab",xaxt='n',xlab="",ylab="",lwd=2,main="Nivel Log-CO Suavizado")
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_smooth$s[-1,2],start=c(anioi,mesi),frequency=12),col="olivedrab",xaxt='n',xlab="",ylab="",main="Pendiente Log-CO Suavizado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_smooth$s[-1,3],start=1995,frequency=12),col="olivedrab",xaxt='n',xlab="",ylab="",main="Estacionalidad Log-CO Suavizado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+@
+
+A partir del modelo filtrado, se obtiene el suavizamiento para los tres estados. La figura \ref{fig:Grafica_Estados_Suavizado} muestra el nivel, la pendiente y la estacionalidad del Log-CO suavizados con el Filtro de Kalman. Al estar suavizadas, las tres series tienen menor variabilidad que las series mostradas en la figura \ref{fig:Grafica_Edos_Filtrado} pues en el suavizado se toma en cuenta los valores futuros de la serie mientras que el filtrado sólo toma en cuenta las obsevaciones pasadas. Por su parte las figuras \ref{fig:Grafica_SerievsSuavizado} y \ref{fig:Grafica_SerievsSuavizado_Zoom} muestran la serie observada del Log-CO y la serie suavizada. \\
+
+<<Grafica_SerievsSuavizado, echo=FALSE, cache=TRUE, dependson=c('datos','Suavizado'),fig.pos='H',fig.widht=7,fig.height=3.5,fig.cap='Serie Observada vs. Serie Suavizada'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(CO,col="royalblue1",xaxt="n",xlab="",ylab="",main="Log-CO")
+lines(ts(mod_dlm_smooth$s[-1,1],start=c(anioi,mesi),frequency=12),col="olivedrab",lty=2,lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8,cex.lab=0.8)
+axis(2,cex.axis=0.8,cex.lab=0.8)
+
+leyenda<-c("Observado","Suavizado")
+legend("topright",leyenda,col=c('royalblue1','olivedrab'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+@
+
+<<Grafica_SerievsSuavizado_Zoom,echo=FALSE, cache=TRUE, dependson=c('datos','Suavizado'),fig.pos='H',fig.widht=7,fig.height=3.5,fig.cap='Serie Observada vs. Serie Suavizada para el periodo 2008-2017.'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(ts(CO[which(time(CO)==anioi2):length(CO)],start=c(anioi2,1),frequency=12),col="royalblue1",xaxt='n',xlab="",ylab="",main="Log-CO, periodo 2008-2017")
+lines(ts(mod_dlm_smooth$s[(which(time(CO)==anioi2)+1):length(CO),1],start=c(anioi2,1),frequency=12),col="olivedrab",lty=2,lwd=2)
+axis(1,anioi2:(aniof+1),paste("ene-",anioi2:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8,cex.lab=0.8)
+axis(2,cex.axis=0.8,cex.lab=0.8)
+
+leyenda<-c("Observado","Suavizado")
+legend("topright",leyenda,col=c('royalblue1','olivedrab'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+@
+
+\subsection{Predicción}
+
+Finalmente, se realiza la predicción para los siguientes 2 años (24 observaciones) y se simulan 1000 trayectorias. La figura \ref{fig:Grafica_Estados_Prediccion} muestra las series filtradas, las predicciones a dos años (2018 y 2019), los intervalos de confianza al 95\%, así como las trayectorias simuladas para el nivel, la pendiente y la estacionalidad del Log-CO. \\
+
+Pareciera que un mayor número de trayectorias quedan fuera del intervalo de confianza para el nivel que para la pendiente y la estacionalidad. Además, los valores pronosticados para los tres estados parecen continuar de manera razonable con la trayectoria de las series filtradas. Cabe mencionar que la pendiente y la estacionalidad tienen intervalos de confianza muy angostos debido a que la estimación de la varianza es prácticamente cero. \\
+
+<<Prediccion,echo=FALSE, cache=TRUE, dependson=c('Filtrado')>>=
+
+# Fijamos la semilla
+set.seed(34575)
+
+# Hacemos el pronóstico a dos años y pedimos 1000 trayectorias.
+mod_dlm_forecast<-dlmForecast(mod_dlm_filter,nAhead=24,sampleNew=1000)
+
+@
+
+<<Grafica_Estados_Prediccion,echo=FALSE, cache=TRUE, dependson=c('datos','Prediccion'),fig.pos='H',fig.widht=10,fig.height=7,fig.cap='Serie de tiempo de las predicciones a dos años de los estados.'>>=
+
+# Graficamos lasp predicciones.
+# Nota: La salida "s" contiene los valores suavizados para el vector de estados 
+# la serie empieza una unidad antes de la primer observación. 
+par(mfrow=c(3,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+sqrtR<- sapply(mod_dlm_forecast$R, function(x) sqrt(x[1,1]))
+pl<- mod_dlm_forecast$a[,1] + qnorm(0.05, sd= sqrtR)
+pu<- mod_dlm_forecast$a[,1] + qnorm(0.95, sd= sqrtR)
+
+plot(ts(c(mod_dlm_filter$m[-1,1],rep(NA,24)),start=anioi,frequency=12),col="firebrick1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-1.4,0.5),lwd=1,main="Nivel Log-CO Predicción")
+invisible(lapply(mod_dlm_forecast$newStates,function(x)
+  lines(x[,1],col="gray90",pch=4)))
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$a[,1]),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray80')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topleft",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+
+sqrtR<- sapply(mod_dlm_forecast$R, function(x) sqrt(x[2,2]))
+pl<- mod_dlm_forecast$a[,2] + qnorm(0.05, sd= sqrtR)
+pu<- mod_dlm_forecast$a[,2] + qnorm(0.95, sd= sqrtR)
+
+plot(ts(c(mod_dlm_filter$m[-1,2],rep(NA,24)),start=1995,frequency=12),col="firebrick1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-0.1,0.1),main="Pendiente Log-CO Predicción",lwd=1)
+invisible(lapply(mod_dlm_forecast$newStates,function(x)
+  lines(x[,2],col="gray90",pch=4)))
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$a[,2]),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray80')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topleft",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+
+
+sqrtR<- sapply(mod_dlm_forecast$R, function(x) sqrt(x[3,3]))
+pl<- mod_dlm_forecast$a[,3] + qnorm(0.05, sd= sqrtR)
+pu<- mod_dlm_forecast$a[,3] + qnorm(0.95, sd= sqrtR)
+
+plot(ts(c(mod_dlm_filter$m[-1,3],rep(NA,24)),start=1995,frequency=12),col="firebrick1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-0.2,0.4),main="Estacionalidad Log-CO Predicción",lwd=1)
+invisible(lapply(mod_dlm_forecast$newStates,function(x)
+  lines(x[,3],col="gray90",pch=4)))
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$a[,3]),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray20')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topleft",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+@
+
+Por último, la figura \ref{fig:Grafica_SerievsPrediccion} muestra la serie observada para el Log-CO, la serie filtrada y el pronóstico a dos años junto con sus intervalos de confianza al 95\%, así como las 1000 trayectorias simuladas. Se puede apreciar que el pronóstico mantiene bien la estacionalidad de la serie y es acorde a la tendencia que presentaba. \\
+
+<<Grafica_SerievsPrediccion,echo=FALSE,cache=TRUE, dependson=c('datos','Prediccion'),fig.pos='H',fig.widht=10,fig.height=3.5,fig.cap='Serie Observada vs. Serie Pronosticada'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+sqrtQ<- sapply(mod_dlm_forecast$Q, function(x) sqrt(x[1,1]))
+pl<- mod_dlm_forecast$f[,1] + qnorm(0.05, sd= sqrtQ)
+pu<- mod_dlm_forecast$f[,1] + qnorm(0.95, sd= sqrtQ)
+
+plot(CO,col="royalblue1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-1.5,0.5),lwd=1,main="Log-Monóxido de Carbono")
+invisible(lapply(mod_dlm_forecast$newObs,function(x)
+  lines(x[,1],col="gray90",pch=4)))
+lines(ts(mod_dlm_filter$m[-1,1],start=c(anioi,mesi),frequency=12),col="firebrick1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$f),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray20')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.6,cex.lab=0.8)
+leyenda<-c('Observada','Filtrada','Predicción','IC 95%')
+legend("topright",leyenda,col=c('royalblue1','firebrick1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3,cex=0.6)
+
+@
+
+
+\subsection{Diagnóstico de Residuales}
+
+<<Residuales_DLM, echo=FALSE, cache=TRUE, dependson=c('Filtro')>>=
+
+# Se obtienen los residuales 
+dlm_resids<-residuals(mod_dlm_filter,sd=FALSE)
+
+@ 
+
+<<Grafica_Residuales,echo=FALSE,cache=TRUE, dependson=c('Residuales_DLM'),fig.pos='H',fig.widht=10,fig.height=3.5,fig.cap='Residuales estandarizados del modelo DLM'>>=
+
+plot(dlm_resids,col='lightblue',lwd=2,main='Residuales del DLM',xaxt='n',xlab="",ylab="")
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.6,cex.lab=0.8)
+abline(h=0,lwd=2,lty=2,col='gray50')
+
+@ 
+
+Se obtienen los residuales del modelo DLM estimado y se aplican las pruebas de diagnóstico. La figura \ref{fig:Grafica_Residuales} muestra la serie de tiempo de los residuales; éstos fluctúan alrededor del cero y parecen tener varianza constante. \\
+
+<<BoxTest_Residuales,echo=FALSE,cache=TRUE, dependson=c('Residuales_DLM'),results='asis'>>=
+
+BoxTest_Resid_DLM<-data_frame(Rezago=1:20,Valor.p=sapply(1:20,function(i) Box.test(dlm_resids,lag=i,type="Ljung-Box")$p.value))# si estàn autocorrelacionados
+             
+BoxTest_Resid_DLM_tabla<-BoxTest_Resid_DLM
+BoxTest_Resid_DLM_tabla$Valor.p<-digitos(BoxTest_Resid_DLM_tabla$Valor.p,nDigits=6)
+
+BoxTest_Resid_DLM_tabla<-xtable(BoxTest_Resid_DLM_tabla,caption="Prueba Ljung-Box para los residuales.",label="tabla:LjungBoxResidDLM")
+
+# Se alínean las columnas 
+align(BoxTest_Resid_DLM_tabla)<-"lrr"
+
+print(BoxTest_Resid_DLM_tabla,print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =TRUE, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(BoxTest_Resid_DLM_tabla)),scalebox=0.85,sanitize.text.function = function(x) x)
+@
+
+La tabla \ref{tabla:LjungBoxResidDLM} muestra los valores-p obtenidos al aplicar la prueba Ljung-Box a dichos residuales. En todos los casos se rechaza la hipótesis nula de no correlación de los residuales. \\
+
+Finalmente, la figura \ref{fig:Hist-QQPlot_Resids_DLM} muestra el histograma de los residuales del DLM comparado con el histograma de una normal simulada para los datos, al igual que el correspondiente Q-Q Plot. Los residuales sí parecen tener una forma de normal con colas ligeramente más pesadas. \\
+
+<<Hist-QQPlot_Resids_DLM,echo=FALSE,cache=TRUE, dependson=c('Residuales_DLM'),fig.pos='H',fig.widht=10,fig.height=3.5,fig.cap='Histograma y Q-Q Plot de los residuales del DLM.'>>=
+
+par(mfrow=c(1,3))
+par(mar=c(4.1,4.1,1.6,2.1))
+
+hist(dlm_resids,prob=TRUE,col="lightblue",breaks=25,main='Residuales del DLM')
+lines(density(dlm_resids),lwd=2,col="darkblue")
+
+set.seed(2454)
+norm.sim<- rnorm(length(dlm_resids),sd=sd(dlm_resids))
+hist(norm.sim, prob=TRUE, col="lightblue", breaks = 25, main= "Normal Simulada",xlab="Valores Simulados")
+lines(density(norm.sim), lwd=2,col='darkblue')
+  
+qqplot(norm.sim,dlm_resids,main='Normal Simulada vs Residuales',xlab='Normal Simulada',ylab='Residuales')
+abline(a=0,b=1,col="red")
+@
+
+\clearpage
+\subsection{ECM para predicciones}
+
+<<dlm_predicciones_ECM,echo=FALSE, cache=TRUE, dependson=c('datos','prediccion')>>=
+
+# Volvemos a correr todo pero sólo para el 80% de la muestra 
+# Agregamos un DLM polinomial y un DLM estacional 
+dlm_CO<-dlmModPoly(2,dW=c(1,1),dV=1) + dlmModSeas(12, dV = 0)
+
+# Creamos la función para encontrar los parametros maximo verosimiles
+buildFun<-function(param){
+  
+  diag(W(dlm_CO))[1:3]<-exp(param[1:3])
+  V(dlm_CO)<-exp(param[4])
+  return(dlm_CO)
+
+  }
+
+# Encontramos los parametros maximo verosimiles
+fit<-dlmMLE(CO.80, parm=rep(0,4),build=buildFun)
+
+# Checamos convergencia 
+conver<-paste("Convergencia", fit$convergence==0)
+
+# Sacamos laexpoenncial a los estimadores encontrados de V y W.
+mod_dlm<-buildFun(fit$par)
+
+# Enseñamos los parametros estimados
+V_MVE<-buildFun(fit$par)[c("V","W")]$V
+W_MVE<-buildFun(fit$par)[c("V","W")]$W
+
+# Filtramos
+mod_dlm_filter<-dlmFilter(CO.80,mod_dlm)
+
+
+# Predecimos para el ultimo 20%
+mod_dlm_forecast<-dlmForecast(mod_dlm_filter,nAhead=length(CO.20))
+
+ECM_dlm<-mean((CO.20-mod_dlm_forecast$f)^2)
+@
+
+<<Grafica_SerievsPrediccion_ECM,echo=FALSE,cache=TRUE, dependson=c('prediccion','dlm_predicciones_ECM'),fig.pos='H',fig.widht=10,fig.height=3.5,fig.cap='Serie Observada vs. Serie Pronosticada.'>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+sqrtQ<- sapply(mod_dlm_forecast$Q, function(x) sqrt(x[1,1]))
+pl<- mod_dlm_forecast$f[,1] + qnorm(0.05, sd= sqrtQ)
+pu<- mod_dlm_forecast$f[,1] + qnorm(0.95, sd= sqrtQ)
+
+plot(CO,col="royalblue1",xaxt='n',xlab="",ylab="",xlim=c(anioi,aniof+1),ylim=c(-1.5,1.5),lwd=1,main="Log-CO")
+lines(ts(c(rep(NA,length(CO.80)),mod_dlm_forecast$f),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,length(CO.80)),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,length(CO.80)),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=time(CO)[length(CO.80)],lty=2,col='gray20')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topright",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3,cex=0.7)
+
+@
+
+Para evaluar la calidad del modelo, se reserva el 20\% final de la muestra para calcular el ECM de las predicciones realizadas por el DLM. La figura \ref{fig:Grafica_SerievsPrediccion_ECM} muestra la serie observada, la predicción realizada por el modelo, así como los intervalos de confianza al 95\% para el úlitmo 20\% de la muestra. El modelo está sobrestimando el veradero valor; sin embargo, las observaciones quedaron dentro del intervalo de confianza. El ECM para este modelo es muy pequeño e igual a \Sexpr{round(ECM_dlm,4)}.\\
+
+
+% ################################################################################################################
+% ################################################################################################################
+% Comparacion Modelos 
+% ################################################################################################################
+% ################################################################################################################
+\section{Comparación de Modelos}
+
+La tabla \ref{tabla:comparacionModelos} muestra una breve comparación entre el modelo clásico seleccionado y el DLM de la sección anterior. Se logró realizar el ajuste de ambos modelos; sin embargo el DLM tiene errores autocorrelacionados mientras que el modelo clásico sí pasa la validación de los residuales. En cuanto al ECM, el DLM es mejor haciendo predicciones que el modelo clásico, pero la diferencia no es muy grande. Por lo tanto, para ajustar y modelar el logaritmo del Monóxido de Carbono mensual promedio en la Ciudad de México se elige un modelo $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$.\\
+
+\begin{table}[H]
+\centering
+\caption{Comparación entre el modelo clásico y el DLM}
+\begin{tabular}{l|c|c}
+\hline
+& $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ & DLM (n=2 + Est.)\\
+\hline
+Ajuste & ${\color{green}\checkmark}$ & ${\color{green}\checkmark}$\\
+No correl. residuales & ${\color{green}\checkmark}$ & ${\color{red}\boldsymbol{\times}}$\\
+Residuales Normales & ${\color{green}\checkmark}$  & ${\color{green}\checkmark}$ \\
+ECM Predicciones & \Sexpr{round(result2$ECM[5],4)}  & \Sexpr{round(ECM_dlm,4)}\\
+\hline
+\end{tabular}\label{tabla:comparacionModelos}
+\end{table}
+
+% ################################################################################################################
+% ################################################################################################################
+% Conclusiones
+% ################################################################################################################
+% ################################################################################################################
+\clearpage
+\section{Conclusiones}
+
+En este trabajo se utilizaron modelos clásicos y Modelos Dinámicos Lineales para ajustar y estimar un modelo para el logaritmo del promedio mensual del Monóxido de Carbono (Log-CO) en la Ciudad de México. La serie Log-CO presenta tendencia decreciente y estacionalidad por lo que un modelo SARIMA(p,d,q)(P,D,Q$)_s$ o un modelo DLM polinomial de orden 2 con estacionalidad son canidatos para ajustar un modelo a la serie.\\
+
+Dentro de los modelos clásicos se realizó una búsqueda en grid con código en paralelo para distintas combinaciones de los parámetros de un SARIMA(p,d,q)(P,D,Q$)_s$. En total se estimaron \Sexpr{nrow(result)} modelos. Se seleccionaron los 5 modelos con el menor AIC para competir. Únicamente 2 de los 5 modelos pasaron todas las pruebas de diagnóstico. Además, los 5 modelos tienen un ECM pequeño (\Sexpr{round(mean(result2$ECM),4)} aprox.). De esta manera, de entre los dos modelos que sí pasaron las pruebas de diagnóstico, se seleccionó aquel con menor número de parámetros: $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ como el mejor modelo clásico.\\
+
+Para el DLM se utilizó un modelo polinomial de orden 2 con estacionalidad. Las matrices de varianzas y covarianzas se estimaron vía Máxima Verosimilitud. Posteriormente se obutvo el filtrado, suavizado y las predicciones para los siguientes 24 meses del Log-CO. Los residuales del DLM pasaron todas las pruebas de diagnósticos excepto la de autocorrelación. Este modelo tiene un ECM de \Sexpr{round(ECM_dlm,4)}. \\
+
+Entre el modelo $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ y el DLM polinomial con estacionalidad, se elige el modelo clásico para ajustar el Log-CO pues la diferencia en ECM es mínima, pero el SARIMA sí pasa todas las pruebas de diagnósticos.\\
+
+\end{document}

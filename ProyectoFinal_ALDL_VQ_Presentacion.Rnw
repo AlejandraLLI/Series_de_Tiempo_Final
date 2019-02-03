@@ -1,0 +1,2026 @@
+% !Rnw weave = knitr
+
+\documentclass[xcolor=table, aspectratio=169, handout]{beamer}
+\usepackage[latin1]{inputenc} %Para manejo de acentos y caracteres.
+\usepackage[english]{babel} % Para escribir en INGLÉS
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\setbeamertemplate{caption}{\insertcaption} 
+\setbeamertemplate{caption label separator}{}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+% this default might be overridden by plain title style
+\newcommand\makebeamertitle{\frame{\maketitle}}%
+% (ERT) argument for the TOC
+\AtBeginDocument{%
+\let\origtableofcontents=\tableofcontents
+\def\tableofcontents{\@ifnextchar[{\origtableofcontents}{\gobbletableofcontents}}
+\def\gobbletableofcontents#1{\origtableofcontents}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{tikz}%para flechas y otras cosas en beamer
+\usetheme{Madrid}
+\usecolortheme{dolphin}
+\usepackage{harmony}
+\usepackage{setspace}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{transparent}
+
+
+\usepackage{ragged2e}
+\justifying
+
+\usepackage{datetime}% http://ctan.org/pkg/datetime
+% % Para poner fecha con día mes y año
+% \newdateformat{mifecha}{Ciudad de M\'exico, \THEDAY~de \monthname[\THEMONTH] de \THEYEAR}
+
+% Para poner fecha con mes y año
+\newdateformat{mifecha}{$5^{th}$ Annual Congress of Economy and Public Policies / April 12, 2018.}
+
+% Para poner fecha corta con día mes y año
+% \newdateformat{mifechacorta}{\THEDAY~de \monthname[\THEMONTH] de \THEYEAR}\makeatletter
+\newdateformat{mifechacorta}{12~de \monthname[\THEMONTH] de \THEYEAR}\makeatletter
+
+% % Para poner fecha corta con mes y año
+% \newdateformat{mifechacorta}{\monthname[\THEMONTH] de \THEYEAR}\makeatletter
+
+\renewcommand{\monthname}[1][\month]{%
+\@orgargctr=#1\relax
+\ifcase\@orgargctr
+\PackageError{datetime}{Invalid Month number \the\@orgargctr}{%
+Month numbers should go from 1 to 12}%
+\or January%
+\or February%
+\or March%
+\or April%
+\or May%
+\or June%
+\or July%
+\or August%
+\or September%
+\or October%
+\or November%
+\or December%
+\else \PackageError{datetime}{Invalid Month number \the\@orgargctr}{%
+Month numbers should go from 1 to 12}%
+\fi}
+\makeatother
+
+%\usepackage{pgfpages}
+%\pgfpageslogicalpageoptions{1}{border code=\pgfusepath{stroke}}
+%\pgfpageslogicalpageoptions{2}{border code=\pgfusepath{stroke}}
+%\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=1mm]
+
+
+\setcounter{tocdepth}{2}
+\renewcommand{\raggedright}{\leftskip=0pt \rightskip=0pt plus 0cm} 
+
+
+\makeatletter
+\newcommand{\miniscule}{\@setfontsize\miniscule{4}{5}}
+\makeatother
+
+
+
+\usepackage{relsize}
+\usepackage{wasysym}
+
+
+\definecolor{rojo}{RGB}{128,0,0}
+\usepackage{bbm}
+\usepackage{setspace}
+\usepackage{exscale,relsize}
+\usepackage{lineno,xcolor}
+\usepackage{algpseudocode}
+\usepackage{color,soul}
+
+
+\definecolor{AzulBanxico}{RGB}{24,43,71}
+\definecolor{NaranjaBanxico}{RGB}{255,120,0}
+\definecolor{VerdeBanxico}{RGB}{49,177,51}
+\definecolor{AmarilloBanxico}{RGB}{255,203,0}
+\definecolor{WhiteSmoke}{RGB}{220,220,255}
+\definecolor{AzulPPTBanxico}{RGB}{37,64,145}
+
+\setbeamercolor{palette primary}{fg=white, bg=AzulBanxico}
+\setbeamercolor{palette secondary}{fg=white, bg=AzulBanxico}
+\setbeamercolor{palette tertiary}{fg=white, bg=AzulBanxico}
+
+\setbeamercolor{normal text}{fg=AzulBanxico}
+
+\setbeamertemplate{navigation symbols}{}
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template diapositivas
+%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{blocks}[default]
+\setbeamercolor{block title}{use=structure,fg=white,bg=AzulBanxico}
+\setbeamercolor{block body}{use=structure,fg=black,bg=white}
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template itemize
+%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{itemize item}{\small\color{AzulBanxico}$\blacksquare$}
+\setbeamertemplate{itemize subitem}{\color{AzulBanxico}$\checkmark$}
+\setbeamertemplate{itemize subsubitem}{\color{AzulBanxico}$\bullet$}
+
+
+% para poner espacio entre cada item
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{3pt}}
+
+\renewcommand{\thefootnote}{\arabic{footnote}/}
+\setbeamertemplate{footnote}{\leavevmode \insertfootnotemark~\insertfootnotetext}
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template enumerate
+%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{enumerate item}{\color{AzulBanxico}\insertenumlabel.}
+\setbeamertemplate{enumerate subitem}{\color{AzulBanxico}\insertenumlabel.\insertsubenumlabel}
+\setbeamerfont{itemize/enumerate subbody}{shape=\itshape}
+\setbeamertemplate{enumerate subsubitem}{\color{AzulBanxico}\insertenumlabel.\insertsubenumlabel.\insertsubsubenumlabel}
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template Datos
+%%%%%%%%%%%%%%%%%%%%%
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{author}{fg=white}
+\setbeamercolor{institute}{fg=white}
+\setbeamercolor{date}{fg=white}
+\setbeamercolor{frametitle}{fg=AzulBanxico}
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template titulo portada
+%%%%%%%%%%%%%%%%%%%%%
+\defbeamertemplate*{title page}{customized}[1][]
+{
+\usebeamercolor[fg]{title}  
+\vspace{-3mm}
+\usebeamerfont{author}\hspace*{4cm}\inserttitle\par
+\usebeamerfont{author}\hspace*{4cm}\insertauthor\par
+\usebeamerfont{institute}\hspace*{4cm}\insertinstitute\par
+\usebeamerfont{date}\hspace*{4cm}\insertdate\par
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Background INFO RESERVADA (COMENTAR/DESCOMENTAR)
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\usebackgroundtemplate{\centering
+\includegraphics[width=\paperwidth,height=\paperheight]{Imagen4169Reservada.png}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Background OFICIAL (COMENTAR/DESCOMENTAR)
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usebackgroundtemplate{\centering
+%        \includegraphics[width=\paperwidth,height=\paperheight]{Imagen4169Portada.png}}
+%
+%\setbeamertemplate{title}
+%{
+%   \begin{textblock}{1}[0,0](0.2,0.04)
+%         \color{white}\textbf{\insertframetitle}
+%  \end{textblock}
+%}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template cuadro Info Reservada (COMENTAR/DESCOMENTAR)
+%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\textoreserva}{
+% \miniscule \color{re} State: In process\par
+% Administrative Unit: \insertshortauthor\par
+% First Version:  November, 2016.\par
+% Last update: March, 2018.
+\color{AzulBanxico}
+}
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template cuadro titulo
+%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\textotitulo}{
+\usebeamercolor[fg]{title}  
+\usebeamerfont{author}\inserttitle\par
+\usebeamerfont{author}\vspace{7pt}\insertauthor\par
+%\usebeamerfont{institute}\insertinstitute\par
+\usebeamerfont{institute}\vspace{5pt}\insertdate\par
+\color{AzulBanxico}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Portada INFO RESERVADA (COMENTAR/DESCOMENTAR)
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\portadaReservada}
+{
+{
+\setbeamertemplate{footline}{}
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{Imagen1169Reservada2.png}}
+\begin{frame}
+%\begin{textblock*}{ancho del título}(sangría,posicion vertical)
+\begin{textblock*}{4cm}(0.1cm,6.7cm)
+\textoreserva
+\end{textblock*}
+%\begin{textblock*}{ancho del título}(sangría,posicion vertical) Nota: a menor posicion vertical más arriba pone el título.
+\begin{textblock*}{8.6cm}(4.5cm,5.8cm)
+\textotitulo
+\end{textblock*}
+\end{frame}
+}
+\addtocounter{framenumber}{-1}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Portada OFICIAL (COMENTAR/DESCOMENTAR)
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newcommand{\portadaOficial}
+%{
+%{
+%\setbeamertemplate{footline}{}
+%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{Imagen1169Portada.png}}
+%\begin{frame}
+%
+%\begin{textblock*}{8.4cm}(0.1cm,6.2cm)
+%\textotitulo
+%\end{textblock*}
+%\end{frame}
+%}
+%\addtocounter{framenumber}{-1}
+%}
+
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template footline
+%%%%%%%%%%%%%%%%%%%%%
+\setbeamercolor{footlinecolor}{fg=white}
+%\renewcommand\footnoterule{{\color{white}\hrule height 0pt width \paperwidth}}
+
+
+\setbeamertemplate{footline}
+{
+\leavevmode%
+\hbox{%
+\begin{beamercolorbox}[wd=0.4\paperwidth,ht=2.25ex,dp=4ex,right]{footlinecolor}
+\usebeamerfont{author in head/foot}
+\end{beamercolorbox}}%
+\hbox{%
+\begin{beamercolorbox}[wd=0.5\paperwidth,ht=2.5ex,dp=4ex,center]{footlinecolor}
+\usebeamerfont{author in head/foot}
+%\insertshortauthor\hspace*{.3ex} 
+%\insertshortinstitute \hspace*{18ex}
+\insertshorttitle
+%\insertshortdate \hspace*{18ex}
+%\insertframenumber{} / \inserttotalframenumber \hspace*{6ex}
+\end{beamercolorbox}}%
+\hbox{%
+\begin{beamercolorbox}[wd=0.1\paperwidth,ht=2.25ex,dp=4ex,right]{footlinecolor}
+\usebeamerfont{author in head/foot}
+\insertframenumber{} / \inserttotalframenumber \hspace*{6ex}
+\end{beamercolorbox}}%
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Contraportada
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\contraportada}
+{
+{
+\setbeamertemplate{footline}{}
+\usebackgroundtemplate{\includegraphics[width=\paperwidth]{Imagen2169.png}}
+\begin{frame}
+% \begin{textblock*}{1.0\paperwidth}(0cm,4.7cm)
+\begin{textblock*}{1.0\paperwidth}(0cm,4.5cm)
+\usebeamercolor[fg]{title}
+\begin{center}\usebeamerfont{date}\insertdate
+\end{center}
+\end{textblock*}
+\end{frame}
+}
+\addtocounter{framenumber}{-1}
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template Indice
+%%%%%%%%%%%%%%%%%%%%%
+\AtBeginSection[]{
+%\setbeamercolor{section in toc shaded}{use=structure,fg=structure.fg}
+%\setbeamercolor{section in toc}{fg=black}
+%\setbeamertemplate{section in toc shaded}[default][10]
+\setbeamertemplate{footline}
+{
+\leavevmode%
+\hbox{%
+\begin{beamercolorbox}[wd=0.4\paperwidth,ht=2.25ex,dp=4ex,right]{footlinecolor}
+\usebeamerfont{author in head/foot}
+\end{beamercolorbox}}%
+\hbox{%
+\begin{beamercolorbox}[wd=0.5\paperwidth,ht=2.25ex,dp=4ex,center]{footlinecolor}
+\usebeamerfont{author in head/foot}
+%\insertshortauthor\hspace*{.3ex} 
+%\insertshortinstitute \hspace*{18ex}
+\insertshorttitle
+%\insertshortdate \hspace*{18ex}
+%\insertframenumber{} / \inserttotalframenumber \hspace*{6ex}
+\end{beamercolorbox}}%
+\hbox{%
+\begin{beamercolorbox}[wd=0.1\paperwidth,ht=2.25ex,dp=4ex,right]{footlinecolor}
+\end{beamercolorbox}}%
+}
+\begin{frame}
+% \frametitle{\'Indice}
+\frametitle{Index}
+\tableofcontents[currentsection]
+\end{frame}
+\setbeamertemplate{footline}
+{
+\leavevmode%
+\hbox{%
+\begin{beamercolorbox}[wd=0.4\paperwidth,ht=2.25ex,dp=4ex,right]{footlinecolor}
+\usebeamerfont{author in head/foot}
+\end{beamercolorbox}}%
+\hbox{%
+\begin{beamercolorbox}[wd=0.5\paperwidth,ht=2.25ex,dp=4ex,center]{footlinecolor}
+\usebeamerfont{author in head/foot}
+%\insertshortauthor\hspace*{.3ex} 
+%\insertshortinstitute \hspace*{18ex}
+\insertshorttitle
+%\insertshortdate \hspace*{18ex}
+%\insertframenumber{} / \inserttotalframenumber \hspace*{6ex}
+\end{beamercolorbox}}%
+\hbox{%
+\begin{beamercolorbox}[wd=0.1\paperwidth,ht=2.25ex,dp=4ex,right]{footlinecolor}
+\usebeamerfont{author in head/foot}
+\insertframenumber{} / \inserttotalframenumber \hspace*{6ex}
+\end{beamercolorbox}}%
+}
+\addtocounter{framenumber}{-1}
+} 
+
+
+\setbeamertemplate{section in toc}
+{
+\protect\block{ ~\inserttocsectionnumber.   \inserttocsection}
+\protect\endblock
+}
+
+\setbeamertemplate{section in toc shaded}
+{
+\transparent{0.05}  
+\protect\block{ \transparent{0.5}\color{AzulBanxico} ~\inserttocsectionnumber.   \inserttocsection}
+\protect \endblock
+}
+
+\setbeamertemplate{subsection in toc}
+{
+~\inserttocsectionnumber.\inserttocsubsectionnumber.   \inserttocsubsection
+
+}
+
+\setbeamertemplate{subsection in toc shaded}
+{}
+
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Mis comandos especiales y paquetes 
+
+%%%%%%%%%%%%%%%%%%%%%
+% Template Titulo diapositivas
+%%%%%%%%%%%%%%%%%%%%%
+\usepackage{multirow}
+\usepackage{rotating} %para girar encabezados de tablas.
+\usepackage{booktabs}
+
+\setbeamertemplate{frametitle}{\par\vskip6pt\bfseries\insertframetitle}
+\setbeamerfont{frametitle}{size=\Large}
+
+\usepackage{graphicx}% para tomar las imagenes directo del folder en que las guarda kniter.
+\graphicspath{{figure/}} % para tomar las imagenes directo del folder en que las guarda kniter.
+\setlength\belowcaptionskip{-5pt} %para ajustar las tablas en las diapositivas de resultados
+\setlength\abovecaptionskip{-5pt} %para ajustar las tablas en las diapositivas de resultados
+
+\newcommand{\twopartdef}[4] %para las definiciones partidas
+{
+\left\{
+\begin{array}{ll}
+#1 & \mbox{si } #2 \\
+#3 & \mbox{si } #4
+\end{array}
+\right.
+}
+
+\setbeamertemplate{frametitle continuation}{} % para que al usar framebreaks no se enumeren
+
+\newcommand{\tikzmark}[1]{\tikz[remember picture] \node[coordinate] (#1) {#1};} % para flechas en beamer
+
+\setbeamercolor{button}{bg=AzulBanxico,fg=white}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% NOTAS: DATOS ACTUALIZADOS AL 4T17. 
+%        DATOS INEGI ACUTLIZADOS A PRECIOS DEL 2013
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+\title[Series de Tiempo: Proyecto Final]{Series de Tiempo: Proyecto Final}
+\author[ALDL, VQMG]{Alejandra Lelo de Larrea Ibarra  00124433 $\qquad\qquad\qquad$ Victor Quintero  Mármol González 000175897}
+\institute[ITAM]{Instituto Tecnológico Autónomo de México}
+\date{15 de mayo del 2018}
+
+% COMENTAR/ DESCOMENTAR ACORDE A LA VERSION UTILIZADA
+\portadaReservada
+%\portadaOficial
+
+
+<<setup, echo=FALSE,message=FALSE,warning=FALSE>>=
+
+# Directorio de trabajo
+setwd('E:/ITAM Maestría/Primavera 2018/Series de Tiempo/Proyecto Final')
+
+# # Instalamos librerias
+# install.packages("tidyverse") # Para manipulacion y visualizacion de datos
+# install.packages("DT") # Para editar tablas
+# install.packages("Hmisc") # Para editar digitos en tablas 
+# install.packages("plotly") # Para graficas interactivas
+# install.packages("pastecs") # Para estadísticas descriptivas
+# install.packages("knitr") # Para editar tablas y otros. 
+# install.packages("ggpubr") # para gráficas
+# install.packages("xtable") # para editar gráficas
+# install.packages("astsa")
+# install.packages("forecast") # para series de tiempo
+# install.packages("dlm")# modelos dinamicos lineales
+
+# Cargamos librerias
+library(tidyverse) # Para manipulacion y visualizacion de datos
+
+library(DT) # Para editar tablas
+
+# library(Hmisc) # Para editar digitos en tablas 
+
+# library(plotly) # Para graficas interactivas
+
+library(pastecs) # Para estadísticas descriptivas
+
+library(knitr) # Para editar tablas y otros. 
+
+library(ggpubr) # para gráficas
+
+library(xtable) # para editar gráficas
+
+library(astsa)
+
+library(forecast) # para series de tiempo
+
+library(dlm) # modelos dinamicos lineales
+@
+
+<<edicionTexto,echo=FALSE, message=FALSE,warning=FALSE>>=
+
+# Footnote graficas
+# Nota: el valor de y modifica la posición en eje vertical. Va aumentando conforme se quiera tener más arriba el footnote de la grafica. 
+makeFootnote1 <- function(footnoteText,
+                          size=0.6, color='black',xpos=325,ypos=0)
+{
+  require(grid)
+  pushViewport(viewport())
+  grid.text(label= footnoteText ,
+            x=unit(xpos,"mm")-unit(1,"npc"),
+            y= unit(ypos, "mm"),
+            just=c("left", "bottom"),
+            gp=gpar(cex= size, col=color),
+            check.overlap=TRUE)
+  popViewport()
+}
+
+
+# Se crea una función para que los números menores a un limite se impriman en color color1 (rojo por default) 
+# y los mayores en color2 (negro por default).
+colorTexto <- function(x,lim,color1='red',color2='black'){
+  ifelse(x<lim,
+         paste("\\color{",color1,"}{", formatC(x, dig=3, format="f"), "}"),
+         paste("\\color{",color2,"}{", formatC(x, dig=3, format="f"), "}"))
+}
+
+# Se crea una función de dos variables para que el valor de y correspondiente a valores de x menores a un limite
+# en se impriman en color color1 (rojo por default) y los valores de y correspondientes a valores mayores a un limite 
+# en x se impriman en color2 (negro por default).
+colorTexto2 <- function(x,y,lim,color1='red',color2='black'){
+  ifelse(x<lim,
+         paste("\\color{",color1,"}{", formatC(y, dig=3, format="f"), "}"),
+         paste("\\color{",color2,"}{", formatC(y, dig=3, format="f"), "}"))
+}
+
+
+
+colorCorrel<- function(x, lim){
+  ifelse(x>=lim & x<1,paste("\\color{red}{", formatC(x, dig=2, format="f"), "}"), 
+         ifelse(x>-1 & x<=-lim,paste("\\color{red}{", formatC(x, dig=2, format="f"), "}"),
+                paste("\\color{black}{", formatC(x, dig=2, format="f"), "}")))
+}
+
+
+# Se crea una función para que los números se priman con una cantidad nDigits de dígitos. 
+digitos <- function(x,nDigits=2){
+  ifelse(x<0,
+         paste("\\color{black}{", formatC(x, dig=nDigits, format="f"), "}"),
+         paste("\\color{black}{", formatC(x, dig=nDigits, format="f"), "}"))
+}
+
+
+# Se crea la función para obtener el Significance Code.
+Significancia1 <- function(x){
+  ifelse(x<0.001,
+         paste("\\color{black}{***}"),
+         ifelse(x<0.01, 
+                paste("\\color{black}{**}"),
+                ifelse(x<0.05,
+                       paste("\\color{black}{*}"),
+                       ifelse(x<0.1,
+                              paste("\\color{black}{.}"),
+                              paste("\\color{white}{***}")))))
+}
+
+# Se crea la función para obtener el Significance Code con dos variables.
+Significancia2 <- function(x,y){
+  ifelse(x<0.001,
+         paste(formatC(y, dig=3, format="f"),"\\color{black}{***}"),
+         ifelse(x<0.01,
+                paste(formatC(y, dig=3, format="f"),"\\color{black}{**}"),
+                ifelse(x<0.05,
+                       paste(formatC(y, dig=3, format="f"),"\\color{black}{*}"),
+                       ifelse(x<0.1,
+                              paste(formatC(y, dig=3, format="f"),"\\color{black}{.}"),
+                              paste(formatC(y, dig=3, format="f"),"\\color{white}{***}")))))
+}
+
+
+# Se fija el color azul banxico
+azulBanxico<-rgb(24,43,71,maxColorValue=255)
+grisGraficas<-rgb(71,71,71,maxColorValue=255)
+
+@
+
+\section{Introducción}
+
+% ######## Diapositiva 1 #########
+\begin{frame}{Introducción}
+
+\begin{itemize}
+  \item Datos de la cantidad de Monóxido de Carbono (CO) promedio en partículas por millón (ppm) para la Ciudad de México desde 1995.
+  \item Norma vigente: el límite de CO en el ambiente es de 11 ppm para un promedio de 8 horas.
+  \item Relevante en temas de salud:
+  \begin{itemize}
+    \item Puede causar afectaciones al corazón o al cerebro 
+    \item Uno de los tipos más comúnes de envenenamiento
+  \end{itemize}
+  \item Relevante en temas de políticas públicas:
+  \begin{itemize}
+    \item Indicador para definir la calidad del aire y declarar contignencias ambientales.
+    \item Parámetros de la SEDENA: 
+    \begin{itemize}
+      \item Buena: 0.00-5.50
+      \item Regular: 5.51-11.00
+      \item Mala: 11.01-16.50
+      \item Muy mala: 16.51-22.00
+      \item Extremadamente mala: $>$22.00
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+
+% ######## Diapositiva 2 #########
+\begin{frame}{Objetivo}
+
+\begin{itemize}
+\item El objetivo de este trabjo es ajustar distintos modelos Estacionales Autorregresivos Integrados de Promedios Móviles (SARIMA), así como un Modelo Dinámico Lineal (DLM) para posteriormente comprar el desempeño de ambas metodologías.
+\end{itemize}
+
+\end{frame}
+
+
+\section{Datos}
+
+<<datos,echo=FALSE, cache=TRUE,message=FALSE,warning=FALSE>>=
+
+# Leemos los datos 
+datos<-read.csv("CO.csv",header=TRUE)
+
+# Tansformamos algunas variables 
+# datos$day<-as.numeric(substring(datos$dt,1,2))
+datos$month<-as.numeric(substring(datos$dt,4,5))
+datos$year<-as.numeric(substring(datos$dt,7,10))
+
+# FIjamos el año de inicio de los datos. 
+anioi<-1995
+mesi<-1
+aniof<-2017
+mesf<-12
+
+anioi2<-2008 
+
+# Recortamos la serie 
+datos<-filter(datos,year>=anioi)
+
+# Agregamos los datos mensualmente
+datos2<-aggregate(datos$CO_prom,by=list(month=datos$month,year=datos$year), FUN=mean, na.rm=TRUE)
+colnames(datos2)[ncol(datos2)]<-"CO_prom"
+
+# Agregamos un índice
+datos2$id<-1:nrow(datos2)
+
+# # Completamos los datos faltantes con interpolación lineal
+# datos2$CO_prom<-na.interp(datos2$CO_prom)
+
+# Convertimos a serie de tiempo
+CO<-ts(datos2$CO_prom,start=c(anioi,mesi),frequency=12)
+
+@
+
+% ######## Diapositiva 3 #########
+\begin{frame}{Datos}
+
+\begin{itemize}
+  \item Datos del nivel de CO por hora en la Ciudad de México obtenidos de la SEDEMA.
+  \item Se agregan los datos mensualmente: \Sexpr{nrow(datos2)} observaciones del promedio mensual de CO.
+  \item Periodo muestral: enero de \Sexpr{anioi} a diciembre del \Sexpr{aniof}.
+\end{itemize}
+
+\end{frame}
+
+% ######## Diapositiva 4 #########
+\begin{frame}{Datos}
+
+<<Grafica_datos,echo=FALSE, message=FALSE,cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=4>>=
+
+par(mfrow=c(1,2))
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(CO,col='blue',main="Monóxido de Carbono 1995-2017",xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8,cex.lab=0.8)
+
+
+plot(CO,xlim=c(anioi2,aniof+1-(1/12)),col='blue',lwd=2,main="Monóxido de Carbono 2008-2017",xaxt="n",xlab="",ylab="",ylim=c(min(CO[match(anioi2,time(CO)):length(time(CO))]),max(CO[match(anioi2,time(CO)):length(time(CO))])))
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.75,cex.lab=0.75)
+abline(v=anioi2:(aniof+1),col="red",lty=2)
+
+@
+
+\begin{itemize}
+  \item La serie tiene un componente estacional, tendencia decreciente y cambios en la varianza.
+\end{itemize}
+\end{frame}
+
+% ######## Diapositiva 5 #########
+\begin{frame}{Datos}
+
+\begin{itemize}
+  \item Para tratar de eliminar los cambios en la varianza se obtiene el logaritmo del CO.
+
+<<datos_log,echo=FALSE, cache=TRUE, dependson=c('datos')>>=
+
+# Sacamos logaritmo (nota: no hay valores negativos)
+CO<-log(CO)
+
+@
+
+<<Grafica_datos_log,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=4>>=
+
+par(mfrow=c(1,2))
+# Graficamos el logaritmo
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(CO,col='blue',main="Log-Monóxido de Carbono 1995-2017",xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(CO,xlim=c(anioi2,aniof-1/12),col='blue',lwd=2,main="Log Monóxido de Carbono, periodo 2008-2017",xaxt="n",xlab="",ylab="",ylim=c(min(CO[match(anioi2,time(CO)):length(time(CO))]),max(CO[match(anioi2,time(CO)):length(time(CO))])))
+axis(1,anioi2:(aniof+1),paste("ene-",anioi2:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+abline(v=anioi2:(aniof+1),col="red",lty=2)
+
+@
+
+  \item Varianza es más homogénea, persiste la tendencía y la estacionalidad.\\ 
+\end{itemize}
+
+\end{frame}
+
+% ######## Diapositiva 6 #########
+\begin{frame}{ACF y PACF Log-CO}
+<<ACF_PACF,echo=FALSE,cache=TRUE,dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5>>=
+par(mfrow=c(1,2))
+par(mar=c(2.1,3.1,3.1,1.1))
+acf(CO,lag.max=length(CO),main="ACF para la serie mensual del Log-CO",xlab="Rezago",ylab="")
+pacf(CO,lag.max=length(CO),main="PACF para la serie mensual del Log-CO",xlab="Rezago",ylab="")
+
+@
+
+\begin{itemize}
+  \item ACF: varios rezagos significativos, comportamiento de una serie con componente estacional.
+  \item PACF: algunos rezagos significativos, parece que se corta rápidamente.
+\end{itemize}
+\end{frame}
+
+% ######## Diapositiva 7 #########
+\begin{frame}{Diferencia Orden 1}
+
+\begin{itemize}
+  \item Para eliminar la estacionalidad diferenciamos de orden uno. 
+  \item Persiste la estacionalidad.
+\end{itemize}
+<<Dif_CO,echo=FALSE, cache=TRUE,dependson=c('datos')>>=
+
+diff_CO<-diff(CO)
+
+@
+
+<<Grafica_datos_dif,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5>>=
+
+par(mfrow=c(1,2))
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(diff_CO,col='blue',main=expression(paste(Delta,"Log-Monóxido de Carbono",sep="")),xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+par(mar=c(4.1,3.1,1.6,1.1))
+plot(diff_CO,xlim=c(anioi2,aniof+1-1/12),ylim=c(min(diff_CO[match(anioi2,time(diff_CO)):match(aniof+1-1/12,time(diff_CO))]),max(diff_CO[match(anioi2,time(diff_CO)):match(aniof+1-1/12,time(diff_CO))])),col='blue',lwd=2,main=expression(paste(Delta,"Log-Monóxido de Carbono, periodo 2008-2017",sep="")),xaxt="n",xlab="",ylab="")
+axis(1,anioi2:(aniof+1),paste("ene-",anioi2:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+abline(v=anioi2:(aniof+1),col="red")
+
+@
+
+\end{frame}
+
+% ######## Diapositiva 8 #########
+\begin{frame}{ACF y PACF Diferencia Orden 1}
+
+<<ACF_PACF_dif,echo=FALSE,cache=TRUE,dependson=c('Dif_CO'),fig.pos='H',fig.width=10,fig.height=3.5>>=
+
+par(mfrow=c(1,2))
+par(mar=c(2.1,3.1,3.1,1.1))
+
+acf(diff_CO,lag.max=120,main=expression(paste("ACF para la serie mensual ",Delta,"Log-CO",sep="")))
+pacf(diff_CO,lag.max=120,main=expression(paste("PACF para la serie mensual ",Delta,"Log-CO",sep="")))
+@
+
+\begin{itemize}
+  \item Se eliminó el patrón estacional que mostraba el ACF, sigue habiendo rezagos significativos que parecen decrecer.
+  \item PACF sigue mostrando algunos rezagos significativos que se cortan rápidamente. 
+\end{itemize}
+\end{frame}
+
+% ######## Diapositiva 7 #########
+\begin{frame}{Diferencia de Orden 12 de la Diferencia}
+
+\begin{itemize}
+  \item Para eliminar la estacionalidad, diferenciamos de orden 12 la serie ya diferenciada. 
+  \item Ya no hay tendencia ni estacionalidad.
+  \item Persisten algunos cambios en la varianza hacia el final de la serie.
+ <<Dif2_CO,echo=FALSE, cache=TRUE,dependson=c('Dif_CO')>>=
+
+diff2_CO<-diff(diff_CO,12)
+
+@
+
+<<Grafica_datos_dif2,echo=FALSE, cache=TRUE, dependson=c('datos'),fig.pos='H',fig.width=10,fig.height=3.5>>=
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(diff2_CO,col='blue',main=expression(paste(Delta[12],Delta,"Log-Monóxido de Carbono",sep="")),xaxt="n",xlab="",ylab="",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+@
+
+\end{itemize} 
+
+\end{frame}
+
+% ######## Diapositiva 8 #########
+\begin{frame}{ACF y PACF Diferencia Orden 12 de la Diferencia}
+
+<<ACF_PACF_dif2,echo=FALSE,cache=TRUE,dependson=c('Dif_CO'),fig.pos='H',fig.width=10,fig.height=3.5>>=
+par(mfrow=c(1,2))
+par(mar=c(2.1,3.1,3.1,1.1))
+
+acf(diff2_CO,lag.max=365,main=expression(paste("ACF para la serie mensual ",Delta[12],Delta,"Log-CO",sep="")))
+pacf(diff2_CO,lag.max=365,main=expression(paste("PACF para la serie mensual ",Delta[12],Delta,"Log-CO",sep="")))
+
+@
+\begin{itemize}
+  \item ACF: se corta después del segundo rezago y muestra un valor significativo en el rezago 9.
+  \item PACF se corta después de 4 rezagos aproximadamente (o podría decrecer).
+  \item Esto nos hace pensar en un modelo SARIMA(p,d,q)(P,D,Q$)_s$ o un DLM. 
+\end{itemize}
+
+\end{frame}
+
+\section{Modelos Clásicos}
+
+% ######## Diapositiva 9 #########
+\begin{frame}{Estimación de Modelos SARIMA}
+
+<<Modelos_SARIMA_Grid_Paralelo,echo=FALSE, eval=FALSE, include=FALSE, cache=TRUE, dependson=('datos'),warning=FALSE,results='asis'>>=
+
+# Función para modelar SARIMA
+mod_Sarima<-function(datos){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      mod<-NA
+      
+    }
+    
+    mod
+    
+  }
+  
+  fun_out
+  
+}
+
+
+# Se fijan parámetros 
+params<-list(p=0:5,
+             d=1,
+             q=0:5,
+             P=0:5,
+             D=1,
+             Q=0:5,
+             s=12)%>%expand.grid
+
+
+# Evaulamos el modelo en los datos 
+modelo_CO<-mod_Sarima(CO)
+
+params<-params %>%
+  mutate(modelo=pmap(.,modelo_CO))%>%
+  mutate(LogLike=map(modelo,eval_loglike))%>%
+  mutate(AIC=map(modelo,eval_aic))%>%
+  mutate(LjungBox=map(modelo,eval_LjungBox))
+
+result_modelos<-params%>%
+  select(p,d,q,P,D,Q,s,LogLike,AIC)%>%
+  unnest%>%
+  arrange(AIC)
+
+# Se fijan parámetros 
+params<-list(p=0:5,
+             d=1,
+             q=0:5,
+             P=0:5,
+             D=1,
+             Q=0:5,
+             s=12)%>%expand.grid
+
+# Contamos el tiempo de máquina
+t<-Sys.time()
+
+# Codigo en paralelo
+no_cores <- detectCores() - 1
+clust <- makeCluster(no_cores)
+registerDoParallel(clust)
+
+results<-foreach(i=1:nrow(params),.combine=rbind) %dopar%{
+  
+  mod<-mod_Sarima(p=params[i,1],d=params[i,2],q=params[i,3],P=params[i,4],D=params[i,5],Q=params[i,6],s=params[i,7])
+  
+  if(is.na(mod)){
+    
+    (data.frame(p=params$p[i],d=params$d[i],q=params$q[i],P=params$P[i],D=params$D[i],Q=params$Q[i],s=params$s[i],Verosim=NA,AIC=NA,LjungBox=NA))
+    
+  }else{
+    Verosim<-mod$loglik
+    AIC<-mod$aic
+    LjungBox<-Box.test(mod$residuals,lag=log(length(mod$residuals)))$p.value
+    
+    (data.frame(p=params$p[i],d=params$d[i],q=params$q[i],P=params$P[i],D=params$D[i],Q=params$Q[i],s=params$s[i],Verosim=Verosim,AIC=AIC,LjungBox=LjungBox))
+  }
+  
+}
+
+stopImplicitCluster()
+stopCluster(clust)
+t<-Sys.time()-t
+
+results<-results%>%
+  as_data_frame%>%
+  arrange(AIC)
+
+@
+
+<<Tabla_Modelos_SARIMA_Grid_Paralelo,echo=FALSE, cache=TRUE, dependson=('datos'),message=FALSE,warning=FALSE,results='asis'>>=
+
+# Correr el código en paralelo tarda mucho de cualquier forma. 
+# Importamos el CSV con los resultados del servidor BANXICO
+# result<-read.csv("E:/ITAM Maestría/Primavera 2018/Series de Tiempo/Proyecto Final/results_grid_SARIMA.csv")
+result<-read.csv("E:/ITAM Maestría/Primavera 2018/Series de Tiempo/Proyecto Final/results_grid_SARIMA_logs.csv")
+
+
+# Edición tabla. 
+result_modelos_tabla<-as.matrix(result[,-ncol(result)])
+
+for(i in 1:7){
+  result_modelos_tabla[,i]<-digitos(as.numeric(as.character(result_modelos_tabla[,i])),nDigits=0)
+}
+
+result_modelos_tabla[,8:9]<-digitos(as.numeric(as.character(result_modelos_tabla[,8:9])),nDigits=4)
+
+result_modelos_tabla<-xtable(result_modelos_tabla,caption="Comparación AIC's para modelos SARIMA(p,d,q)x(P,D,Q)s",label="tabla:comparacionARIMA")
+
+# Se alínean las columnas 
+align(result_modelos_tabla)<-"lrrr|rrrr|rr"
+
+# Se agregan los encabezados
+addtorow<-list()
+addtorow$pos<-list(0,0)
+addtorow$command<-c("\\multicolumn{7}{c|}{\\textbf{Modelo}} & \\multicolumn{2}{c}{\\textbf{Criterio}} \\\\\n",
+                    "\\hline \\textbf{p} & \\textbf{d} & \\textbf{q} & \\textbf{P} & \\textbf{D} & \\textbf{Q} & \\textbf{s} & \\textbf{Log-Like.} & \\textbf{AIC}  \\\\\n")
+
+@
+
+\begin{itemize}
+  \item Es claro que $d=1$, $D=1$ y $s=12$. 
+  \item Valores de los parámetros p, q, P y Q no son tan claros. 
+  \item Creamos una función para estimar distintos modelos SARIMA(p,d,q)(P,D,Q$)_s$
+    \begin{itemize}
+      \item Se hace una búsqueda exhaustiva en grid con código en paralelo.
+        \item Posibles valores para cada parámetro: 
+        \begin{itemize}
+          \item $p=1, 2, 3, 4, 5$
+          \item $q=1, 2, 3, 4, 5$
+          \item $P=1, 2, 3, 4, 5$
+          \item $Q=1, 2, 3, 4, 5$
+        \end{itemize}
+        \item En total se ajustaron \Sexpr{nrow(result)} modelos
+        \item \Sexpr{length(which(is.na(result$AIC)))} modelos no pudieron ser estimados con la función \textit{arima}. 
+        \item Se eligen los 5 modelos con menor AIC para competir y realizar las pruebas de diagnóstico. 
+      \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+
+% ######## Diapositiva 9 #########
+\begin{frame}{Selección de Modelos SARIMA}
+
+\setlength\belowcaptionskip{0pt}
+<<Impresion_Tabla_Modelos_SARIMA_Grid_Paralelo,echo=FALSE, cache=TRUE, dependson=('datos'),message=FALSE,warning=FALSE,results='asis'>>=
+print(result_modelos_tabla[1:5,],print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =FALSE, add.to.row=addtorow, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(result_modelos_tabla[1:5,])),scalebox=0.8,sanitize.text.function = function(x) x)
+@
+
+\begin{itemize}
+  \item Los mejores modelos tienen parametros de orden chico para la parte estacional, pero mayores para la parte no estacional.
+  \item El valor del AIC es muy similar entre los 5 modelos
+  \item Hay mayor variabilidad en el valor de la verosimilitud.
+\end{itemize}
+
+\end{frame}
+
+% ######## Diapositiva 9 #########
+\begin{frame}{Diagnóstico de Residuales: Prueba LJung-Box}
+
+\setlength\belowcaptionskip{0pt}
+<<Prueba_LjungBox,echo=FALSE, cache=TRUE, dependson=('datos'),warning=FALSE,results='asis'>>=
+
+LjungBox<-result%>%
+  select(p,d,q,P,D,Q,s,AIC,LjungBox)%>%
+  arrange(AIC)%>%
+  select(-c(AIC))
+
+
+LjungBox_tabla<-as.matrix(LjungBox)
+
+LjungBox_tabla[,8]<-digitos(as.numeric(LjungBox_tabla[,8]),nDigits=4)
+
+LjungBox_tabla<-xtable(LjungBox_tabla,caption="Prueba Ljung-Box para modelos SARIMA(p,d,q)x(P,D,Q)s",label="tabla:comparacionLjungBox")
+
+# Se alínean las columnas 
+align(LjungBox_tabla)<-"lrrr|rrrr|r"
+
+# Se agregan los encabezados
+addtorow<-list()
+addtorow$pos<-list(0,0)
+addtorow$command<-c("\\multicolumn{7}{c|}{\\textbf{Modelo}} & \\multicolumn{1}{c}{\\textbf{Ljung-Box}} \\\\\n",
+                    "\\hline \\textbf{p} & \\textbf{d} & \\textbf{q} & \\textbf{P} & \\textbf{D} & \\textbf{Q} & \\textbf{s} & \\textbf{p-value}  \\\\\n")
+
+print(LjungBox_tabla[1:5,],print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =FALSE, add.to.row=addtorow, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(LjungBox_tabla[1:5,])),scalebox=0.9,sanitize.text.function = function(x) x)
+
+@
+
+\begin{itemize}
+  \item Los cinco modelos pasan la prueba. 
+  \item No hay evidencia de errores autocorrelacionados.\\ 
+\end{itemize}
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Diagnóstico de Residuales: ACF y PACF}
+\begin{itemize}
+  \item ACF: rezagos de los residuales no significativos para todos los modelos. 
+  \item PACF se tiene un rezago ``marginalmente'' significativo (el rezago 4) en los modelos 2, 3 y 4.
+  \end{itemize}
+<<ACF&PACF_Resid,echo=FALSE, cache=TRUE,dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=3.5>>=
+
+# Función para modelar SARIMA
+mod_Sarima<-function(datos){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      NA
+      
+    }
+    
+    mod
+    
+  }
+  
+  fun_out
+  
+}
+
+# Se fijan parámetros 
+params<-data.frame(p=result$p[1:5],
+                   d=result$d[1:5],
+                   q=result$q[1:5],
+                   P=result$P[1:5],
+                   D=result$D[1:5],
+                   Q=result$Q[1:5],
+                   s=result$s[1:5])
+
+
+# Evaulamos el modelo en los datos 
+modelo_CO<-mod_Sarima(CO)
+
+params<-params %>%
+  mutate(modelo=pmap(.,modelo_CO))
+
+
+par(mfrow=c(1,2))
+
+acf(params$modelo[[1]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[1]]$arma[1],",",params$modelo[[1]]$arma[6],",",params$modelo[[1]]$arma[2],")x(",params$modelo[[1]]$arma[3],",",params$modelo[[1]]$arma[7],",",params$modelo[[1]]$arma[4],")_",params$modelo[[1]]$arma[5],sep=""))
+pacf(params$modelo[[1]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[1]]$arma[1],",",params$modelo[[1]]$arma[6],",",params$modelo[[1]]$arma[2],")x(",params$modelo[[1]]$arma[3],",",params$modelo[[1]]$arma[7],",",params$modelo[[1]]$arma[4],")_",params$modelo[[1]]$arma[5],sep=""))
+@
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Diagnóstico de Residuales: ACF y PACF}
+
+<<ACF&PACF_Resid2,echo=FALSE, cache=TRUE,dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=5>>=
+
+par(mfrow=c(2,2))
+
+acf(params$modelo[[2]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[2]]$arma[1],",",params$modelo[[2]]$arma[6],",",params$modelo[[2]]$arma[2],")x(",params$modelo[[2]]$arma[3],",",params$modelo[[2]]$arma[7],",",params$modelo[[2]]$arma[4],")_",params$modelo[[2]]$arma[5],sep=""))
+pacf(params$modelo[[2]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[2]]$arma[1],",",params$modelo[[2]]$arma[6],",",params$modelo[[2]]$arma[2],")x(",params$modelo[[2]]$arma[3],",",params$modelo[[2]]$arma[7],",",params$modelo[[2]]$arma[4],")_",params$modelo[[2]]$arma[5],sep=""))
+
+acf(params$modelo[[3]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[3]]$arma[1],",",params$modelo[[3]]$arma[6],",",params$modelo[[3]]$arma[2],")x(",params$modelo[[3]]$arma[3],",",params$modelo[[3]]$arma[7],",",params$modelo[[3]]$arma[4],")_",params$modelo[[3]]$arma[5],sep=""))
+pacf(params$modelo[[3]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[3]]$arma[1],",",params$modelo[[3]]$arma[6],",",params$modelo[[3]]$arma[2],")x(",params$modelo[[3]]$arma[3],",",params$modelo[[3]]$arma[7],",",params$modelo[[3]]$arma[4],")_",params$modelo[[3]]$arma[5],sep=""))
+@
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Diagnóstico de Residuales: ACF y PACF}
+<<ACF&PACF_Resid3,echo=FALSE, cache=TRUE,dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=5>>=
+
+par(mfrow=c(2,2))
+acf(params$modelo[[4]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[4]]$arma[1],",",params$modelo[[4]]$arma[6],",",params$modelo[[4]]$arma[2],")x(",params$modelo[[4]]$arma[3],",",params$modelo[[4]]$arma[7],",",params$modelo[[4]]$arma[4],")_",params$modelo[[4]]$arma[5],sep=""))
+pacf(params$modelo[[4]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[4]]$arma[1],",",params$modelo[[4]]$arma[6],",",params$modelo[[4]]$arma[2],")x(",params$modelo[[4]]$arma[3],",",params$modelo[[4]]$arma[7],",",params$modelo[[4]]$arma[4],")_",params$modelo[[4]]$arma[5],sep=""))
+
+acf(params$modelo[[5]]$residuals,50,main=paste("ACF SARIMA(",params$modelo[[5]]$arma[1],",",params$modelo[[5]]$arma[6],",",params$modelo[[5]]$arma[2],")x(",params$modelo[[5]]$arma[3],",",params$modelo[[5]]$arma[7],",",params$modelo[[5]]$arma[4],")_",params$modelo[[5]]$arma[5],sep=""))
+pacf(params$modelo[[5]]$residuals,50,main=paste("PACF SARIMA(",params$modelo[[5]]$arma[1],",",params$modelo[[5]]$arma[6],",",params$modelo[[5]]$arma[2],")x(",params$modelo[[5]]$arma[3],",",params$modelo[[5]]$arma[7],",",params$modelo[[5]]$arma[4],")_",params$modelo[[5]]$arma[5],sep=""))
+
+@
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Diagnóstico de Residuales: Histogramas y Q-Q Plots}
+
+\begin{itemize}
+  \item La distribución de los residuales parecen tener cola derecha ligeramente más pesada.
+  \item Los modelos 2, 3 y 4 parecen ser aquellos para los que el histograma de los residuales es más distinto al histograma de una normal simulados
+  \item Los 5 Q-Q plots muestran mayor diferencia respecto a la línea de $45^{\circ}$ en la cola derecha.
+\end{itemize}
+
+<<Hist_QQ_Resid,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=3>>=
+
+
+crea_hist<-function(modelo){                   
+  
+  h<-hist(modelo$residuals,prob=TRUE,breaks=25,col='lightblue',main=paste("Residuales SARIMA(",modelo$arma[1],",",modelo$arma[6],",",modelo$arma[2],")x(",modelo$arma[3],",",modelo$arma[7],",",modelo$arma[4],")_",modelo$arma[5],sep=""),xlab="Residuales")
+
+  lines(density(modelo$residuals), col="darkblue", lwd=2)
+  
+}
+
+crea_hist_norm<-function(modelo){                 
+  
+  set.seed(2454)
+  
+  norm.sim<- rnorm(length(modelo$residuals),sd=sqrt(modelo$sigma2))
+  hist(norm.sim, prob=TRUE, col="lightblue", breaks = 25, main= "Normal Simulada",xlab="Valores Simulados")
+  lines(density(norm.sim), lwd=2,col='darkblue')
+}
+
+crea_qqplot<-function(modelo){                   
+  
+  norm.sim<-rnorm(length(modelo$residuals),sd=sqrt(modelo$sigma2))
+  
+  qqplot(norm.sim,modelo$residuals,main=paste("Q-Q Plot de los Residuales SARIMA(",modelo$arma[1],",",modelo$arma[6],",",modelo$arma[2],")x(",modelo$arma[3],",",modelo$arma[7],",",modelo$arma[4],")_",modelo$arma[5],sep=""),xlab="Normal",ylab="Residuales")
+  abline(a=0,b=1,col="red")
+  
+  # qqnorm(modelo$residuals,main=paste("Q-Q Plot de los Residuales SARIMA(",modelo$arma[1],",",modelo$arma[6],",",modelo$arma[2],")x(",modelo$arma[3],",",modelo$arma[7],",",modelo$arma[4],")_",modelo$arma[5],sep=""))
+  # qqline(modelo$residuals,col='olivedrab')
+  
+}
+
+par(mfrow=c(1,3))
+crea_hist(params$modelo[[1]])
+crea_hist_norm(params$modelo[[1]])
+crea_qqplot(params$modelo[[1]])
+@
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Diagnóstico de Residuales: Histogramas y Q-Q Plots}
+<<Hist_QQ_Resid2,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=5>>=
+
+par(mfrow=c(2,3))
+crea_hist(params$modelo[[2]])
+crea_hist_norm(params$modelo[[2]])
+crea_qqplot(params$modelo[[2]])
+
+crea_hist(params$modelo[[3]])
+crea_hist_norm(params$modelo[[3]])
+crea_qqplot(params$modelo[[3]])
+@
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Diagnóstico de Residuales: Histogramas y Q-Q Plots}
+<<Hist_QQ_Resid3,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=10,fig.height=5>>=
+
+par(mfrow=c(2,3))
+crea_hist(params$modelo[[4]])
+crea_hist_norm(params$modelo[[4]])
+crea_qqplot(params$modelo[[4]])
+
+crea_hist(params$modelo[[5]])
+crea_hist_norm(params$modelo[[5]])
+crea_qqplot(params$modelo[[5]])
+
+
+@
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{ECM Para Predicciones}
+
+\begin{itemize}
+  \item Se reserva el 20\% final de la muestra para evaluar el ECM de las predicciones.
+  \item Todos los modelos presentan un ECM muy pequeño. 
+  \item El primer modelo ($SARIMA(0,1,4)x(0,1,1)_12$) el que da el menor ECM para las predicciones del CO.
+  \begin{itemize}
+    \item La diferencia en ECM entre el primer y quinto modelo es muy pequeña, pero el quinto modelo tiene 2 parámetros menos a estimar.
+  \end{itemize}
+\end{itemize}
+
+\setlength\belowcaptionskip{0pt}
+<<prediccion,echo=FALSE,cache=TRUE,dependson=c('datos','Tabla_Modelos_SARIMA_Grid_Paralelo'),warning=FALSE, message=FALSE,results='asis'>>=
+
+# observaciones 
+c<-round(length(CO)*0.8)
+
+CO.80<-CO[1:c]
+CO.20<-CO[(c+1):length(CO)]
+
+mod_Sarima_predict<-function(datos.80,datos.20){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos.80,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      ECM<-NA
+      
+    }else{
+      
+      pred_values<-predict(mod,n.ahead=length(datos.20))
+      
+      ECM<-mean((datos.20-pred_values$pred)^2)
+    }
+    as.numeric(ECM)
+    
+  }
+  
+  fun_out
+  
+}
+
+params2<-data.frame(p=result$p[1:5],
+                    d=result$d[1:5],
+                    q=result$q[1:5],
+                    P=result$P[1:5],
+                    D=result$D[1:5],
+                    Q=result$Q[1:5],
+                    s=result$s[1:5])
+
+modelo_CO_predict<-mod_Sarima_predict(CO.80,CO.20)
+
+params2<-params2 %>%
+  mutate(ECM=pmap(.,modelo_CO_predict))
+
+
+result2<-params2%>%
+  select(p,d,q,P,D,Q,s,ECM)%>%
+  unnest
+
+
+result_tabla2<-result2
+result_tabla2$ECM<-digitos(as.numeric(result_tabla2$ECM),nDigits=6)
+
+result_tabla2<-xtable(result_tabla2,caption="Comparación ECM's para modelos SARIMA(p,d,q)X(P,D,Q)_s",label="tabla:comparacionECM")
+
+# Se alinean las columnas 
+align(result_tabla2)<-"lrrrrrrr|r"
+
+# Se agregan los encabezados
+addtorow<-list()
+addtorow$pos<-list(0,0)
+addtorow$command<-c("\\multicolumn{7}{c|}{\\textbf{Modelo}} & \\multicolumn{1}{c}{\\textbf{Criterio}} \\\\\n",
+                    "\\hline \\textbf{p} & \\textbf{d} & \\textbf{q} & \\textbf{P} & \\textbf{D} & \\textbf{Q} & \\textbf{s} & \\textbf{ECM} \\\\\n")
+
+print(result_tabla2,print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =FALSE, add.to.row=addtorow, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(result_tabla2)),scalebox=0.9,sanitize.text.function = function(x) x)
+
+@
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{ECM Para Predicciones}
+
+<<Grafica_prediccion,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=7,fig.height=3>>=
+
+mod_Sarima_predict2<-function(datos.80,datos.20){
+  
+  fun_out<-function(p=0,d=0,q=0,P=0,D=0,Q=0,s=NA){
+    
+    mod<-tryCatch({
+      
+      arima(datos.80,
+            order=c(p,d,q),
+            seasonal=list(order=c(P,D,Q),
+                          period=s))
+      
+    },error=function(e){})
+    
+    if(length(mod)==0 || is.na(mod)==TRUE){
+      
+      NA
+      
+    }else{
+      
+      mod
+      
+    }
+  }
+  
+  fun_out
+}
+
+plot_Sarima_predict<-function(mod,datos.80,datos.20){
+  
+  aux<-time(ts(c(datos.80,datos.20),start=c(anioi,mesi),frequency=12))
+  datos<-data_frame(Id=1:length(c(datos.80,datos.20)),
+                    Obs=c(datos.80,datos.20),
+                    Pred=c(rep(NA,length(datos.80)),predict(mod,n.ahead=length(datos.20))$pred))
+  
+  datos<-gather(datos,Tipo,CO,Obs:Pred)
+  
+  datos<-filter(datos,Id>=match(anioi2,aux))
+  
+  ggplot(datos,aes(x=Id,y=CO,color=Tipo))+theme_bw()+
+    ggtitle(paste("Residuales SARIMA(",mod$arma[1],",",mod$arma[6],",",mod$arma[2],")x(",mod$arma[3],",",mod$arma[7],",",mod$arma[4],")_",mod$arma[5],sep=""))+
+    ylab("Log-CO")+
+    geom_line()+
+    theme(plot.title = element_text(hjust=0.5,size=8))+
+    labs(color = "",xlab="") +
+    scale_color_manual(labels = c("Observado", "Predicción"), values = c("royalblue1", "firebrick1"))+
+    scale_x_continuous(name="",breaks=seq(from=match(anioi2,aux),to=max(unique(datos$Id)),by=12),labels=paste("ene-",anioi2:aniof,sep=""))+
+    theme(axis.text.x=element_text(angle=90,size=6),
+          axis.title.x = element_text(size=6),
+          axis.title.y = element_text(size=8),
+          axis.text.y=element_text(size=8))
+  
+}
+
+params3<-data.frame(p=result$p[1:5],
+                    d=result$d[1:5],
+                    q=result$q[1:5],
+                    P=result$P[1:5],
+                    D=result$D[1:5],
+                    Q=result$Q[1:5],
+                    s=result$s[1:5])
+
+mod_CO_pred2<-mod_Sarima_predict2(CO.80,CO.20)
+
+params3<-params3 %>%
+  mutate(mod=pmap(.,mod_CO_pred2))
+
+q1<-plot_Sarima_predict(params3$mod[[1]],CO.80,CO.20) 
+q2<-plot_Sarima_predict(params3$mod[[2]],CO.80,CO.20) 
+q3<-plot_Sarima_predict(params3$mod[[3]],CO.80,CO.20) 
+q4<-plot_Sarima_predict(params3$mod[[4]],CO.80,CO.20) 
+q5<-plot_Sarima_predict(params3$mod[[5]],CO.80,CO.20) 
+
+
+# Se imprimen las gráficas de forma conjunta con leyenda compartida. 
+ggarrange(q1,q2,q3,q4,nrow=2,ncol=2, common.legend = TRUE, legend = "right")
+
+@
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{ECM Para Predicciones}
+<<Grafica_prediccion2,echo=FALSE, cache=TRUE, dependson=c('Modelos_SARIMA_Grid_Paralelo'),message=FALSE, warning=FALSE,fig.pos='H',fig.width=7,fig.height=2>>=
+
+# Se imprimen las gráficas de forma conjunta con leyenda compartida. 
+ggarrange(q5,nrow=1,ncol=2, common.legend = TRUE, legend = "right")
+
+@
+
+\begin{itemize}
+  \item Los 5 modelos reproducen de manera correcta la estacionalidad de la serie, pero subestiman ligeramente los valles sobre todo a finales del 2017.
+\end{itemize}
+  
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Elección del Modelo}
+
+<<Estim_Params_ModFinal, echo=FALSE,cache=TRUE, dependson=c('Tabla_Modelos_SARIMA_Grid_Paralelo')>>=
+
+coef<-params3$mod[[5]]$coef
+
+coef2<-round(c(1,1+coef[3],-(1+coef[3]),-coef[3],coef[3],1,coef[1],coef[2],coef[4],coef[1]*coef[4],coef[2]*coef[4],coef[5],coef[1]*coef[5],coef[2]*coef[5]),4)
+
+signo<-ifelse(sign(coef2)==1,"+",
+              ifelse(sign(coef2)==0,"","-"))
+
+coef3<-paste(signo,abs(coef2),sep="")
+
+@
+
+\begin{itemize}
+  \item Tomando en cuenta el ACF, PACF, AIC, análisis de residuales y ECM obtenidos, así como la idea de tener un modelo parsimonioso, se decide utilizar el quinto modelo; es decir, un $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$. 
+  \item El modelo final está dado por: 
+\begin{equation*}
+(1-\Phi_1B^{12})(1-B)(1-B^{12})CO_t=(1+\theta_1B^{12}+\theta_2B^{24})(1+\Theta_1B^{12}+\Theta_2B^{24})Z_t,
+\end{equation*}
+\item Los valores estimados para los parámetros son:
+  \begin{itemize}
+    \item $\theta_1=\Sexpr{round(coef[1],4)}$
+    \item $\theta_2=\Sexpr{round(coef[2],4)}$
+    \item $\Phi_1=\Sexpr{round(coef[3],4)}$
+    \item $\Theta_1=\Sexpr{round(coef[4],4)}$
+    \item $\Theta_2=\Sexpr{round(coef[5],4)}$
+    \item $\sigma^2=\Sexpr{round(params3$mod[[5]]$sigma2,4)}$
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Elección del Modelo}
+
+\begin{itemize}
+\item Desarrolando polinomios característicos y sustituyendo el valor de los parámetros, se tiene que el mejor modelo SARIMA es
+\begin{eqnarray}\nonumber
+CO_t&=&CO_{t-1}\Sexpr{coef3[2]}CO_{t-12}\Sexpr{coef3[3]}CO_{t-13}\Sexpr{coef3[4]}CO_{t-24}\Sexpr{coef3[5]}CO_{t-25}\\\nonumber
+&&\quad +Z_t\Sexpr{coef3[7]}Z_{t-1}\Sexpr{coef3[8]} Z_{t-2}\Sexpr{coef3[9]}Z_{t-12}\Sexpr{coef3[10]}Z_{t-13}\\
+&&\quad \Sexpr{coef3[11]}Z_{t-14}+\Sexpr{coef3[12]}Z_{t-24}\Sexpr{coef3[13]}Z_{t-25}\Sexpr{coef3[14]}Z_{t-26}\label{modSARIMA}
+\end{eqnarray}
+donde $Z_t$ es ruido blanco con media cero y varianza $\sigma^2=\Sexpr{round(params3$mod[[4]]$sigma2,4)}$.
+\end{itemize}
+\end{frame}
+
+
+
+\section{Modelo Dinámico Lineal}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Selección del DML}
+
+\begin{itemize}
+  \item La serie del Log-CO tiene tendencia decreciente y estacionalidad.
+  \item Por lo tanto, se necesita un DLM polinomial de segundo orden junto con un DLM estacional.
+  \item Para el DLM polinomial se tiene el siguiente modelo Espacio-Estado:
+\begin{eqnarray}\nonumber
+Y_t^{(1)}&=&A_1X_t^{(1)}+V_t^{(1)}\\
+X_{t+1}^{(1)}&=&G_1X_t^{(1)}+W_t^{(1)}\label{eq:DLM1}
+\end{eqnarray*}
+donde $A_1=[1,0]$, $V_t^{(1)}=V^{(1)}$, $W_t^{(1)}=diag(W_1,W_2)$ y $G_1=
+\begin{bmatrix}
+1 & 1\\
+0 & 1\\
+\end{bmatrix}
+$.
+\item Para el DLM estacional con periodo $s=12$, se tiene el siguiente modelo Espacio-Estado:
+\begin{eqnarray}\nonumber
+Y_t^{(2)}&=&A_2X_t^{(2)}+V_t^{(2)}\\
+X_{t+1}^{(2)}&=&G_2X_t^{(2)}+W_t^{(2)}\label{eq:DLM2}
+\end{eqnarray*}
+donde $A_2=[1,\mathbold{0_{1x10}}]$, $V_t^{(2)}=0$, $W_t^{(2)}=diag(\sigma^2_w,\mathbold{0_{1x10}})$ y $G_2=\begin{bmatrix}- \mathbbm{1}_{10\times 10} & 0\\
+I_{10\times 10} & 0_{10\times 1}\\
+\end{bmatrix}$. 
+\end{itemize}
+\end{frame}
+
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Estimación de V y W vía Máxima Verosimitud}
+
+<<V&W_MVE, echo=FALSE, cache=TRUE, dependson=c('datos') >>=
+
+# Agregamos un DLM polinomial y un DLM estacional 
+dlm_CO<-dlmModPoly(2,dW=c(1,1),dV=1) + dlmModSeas(12, dV = 0)
+
+# Creamos la función para encontrar los parametros maximo verosimiles
+buildFun<-function(param){
+  
+  diag(W(dlm_CO))[1:3]<-exp(param[1:3])
+  V(dlm_CO)<-exp(param[4])
+  return(dlm_CO)
+
+  }
+
+# Encontramos los parametros maximo verosimiles
+fit<-dlmMLE(CO, parm=rep(0,4),build=buildFun)
+
+# Checamos convergencia 
+conver<-paste("Convergencia", fit$convergence==0)
+
+# Sacamos laexpoenncial a los estimadores encontrados de V y W.
+mod_dlm<-buildFun(fit$par)
+
+# Enseñamos los parametros estimados
+V_MVE<-buildFun(fit$par)[c("V","W")]$V
+W_MVE<-buildFun(fit$par)[c("V","W")]$W
+@
+
+<<Comparacion_DLM_StructTS, echo=FALSE, eval=FALSE, include=FALSE, cache=TRUE, dependson=c('datos') >>=
+
+# #Comparamos con la función struct
+# CO.struct<-StructTS(CO,type="BSM")
+# CO.struct
+@
+\begin{itemize}
+  \item Se estiman los valores máximo verosímiles de las matrices V y W en ambos DLM'S. 
+  \item Después de revisar la convergencia, se obtienen los siguientes estimadores:
+  \begin{itemize}
+    \item $\hat{V}^{(1)}=\Sexpr{round(V_MVE,4)}$
+    \item $\hat{W}_1=\Sexpr{round(W_MVE[1,1],4)}$
+    \item $\hat{W}_2=\Sexpr{round(W_MVE[2,2],4)}$
+    \item $\hat{\sigma}^2_W=\Sexpr{round(W_MVE[3,3],4)}$.
+  \end{itemize}
+  \item Una vez conocidas las estimaciones de V y W se puede proceder a estimar el filtrado, suavizado y la predicción del modelo DLM.
+\end{itemize}
+
+\end{frame}
+  
+  % ######## Diapositiva 10#########
+\begin{frame}{Filtrado}
+
+\begin{itemize}
+  \item El Filtro de Kalman es que es sensible a condiciones iniciales; este efecto se puede notar en el inicio del filtrado de los tres estados
+  \begin{itemize}
+    \item Sin embargo, el filtro corrige rápidamente las trayectorias. 
+  \end{itemize}
+  \item El nivel sigue muy de cerca la dinámica de la serie observada.
+  \item La pendiente decrece a lo largo de los primeros dos años y después se mantiene relativamente constante.
+  \item La dinámica de la componente estacional parece ser constante a lo largo de la muestra.
+\end{itemize}
+
+\end{frame}
+  
+  % ######## Diapositiva 10#########
+\begin{frame}{Filtrado}
+<<Filtrado,echo=FALSE,cache=TRUE, dependson=c('datos','V&W_MVE')>>=
+
+# Filtramos el modelo 
+mod_dlm_filter<-dlmFilter(CO,mod_dlm)
+
+@
+
+<<Grafica_Edos_Filtrado,echo=FALSE, cache=TRUE, dependson=c('Filtrado'),fig.pos='H',fig.width=10,fig.height=4>>=
+
+# Graficamos el filtrado.
+# Nota: La salida "m" contiene los valores filrados para el vector de estados 
+# la serie empieza una unidad antes de la primer observación. 
+par(mfrow=c(1,3))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+# plot(CO,col="firebrick1",xlab="",ylab="Nivel",lwd=3,main="Filtrado CO")
+# lines(ts(mod_dlm_filter$m[-1,1],start=1986,frequency=12),col="firebrick1",lty=2,lwd=2)
+
+plot(ts(mod_dlm_filter$m[-1,1],start=c(anioi,1),frequency=12),col="firebrick1",xaxt="n",xlab="",ylab="",lwd=2,main="Nivel Log-CO Filtrado")
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_filter$m[-1,2],start=c(anioi,1),frequency=12),col="firebrick1",xaxt="n",xlab="",ylab="",main="Pendiente Log-CO Filtrado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_filter$m[-1,3],start=anioi,frequency=12),col="firebrick1",xaxt="n",xlab="",ylab="",main="Estacionalidad Log-CO Filtrado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+
+# Comparamos con structts
+# plot(cbind(fitted(CO.struct)))
+@
+
+\end{frame}
+
+  % ######## Diapositiva 10#########
+\begin{frame}{Filtrado}
+
+\begin{itemize}
+  \item Se puede observar una variabilidad mucho menor en la serie filtrada que en la observada, esto debido principalmente a que el cociente $V/W$ es grande ($V/W_1=\Sexpr{round(V_MVE/W_MVE[1,1],2)}$).
+\end{itemize}
+
+<<Grafica_SerievsFiltro,echo=FALSE, cache=TRUE, dependson=c('datos','Filtrado'),fig.pos='H',fig.widht=10,fig.height=2.5>>=
+
+par(mfrow=c(1,2))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(CO,col="royalblue1",xaxt="n",xlab="",ylab="",main="Log-CO")
+lines(ts(mod_dlm_filter$m[-1,1],start=c(anioi,1),frequency=12),col="firebrick1",lty=2,lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.7,cex.lab=0.8)
+leyenda<-c("Observado","Filtrado")
+legend("topright",leyenda,col=c('royalblue1','firebrick1'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.5)
+
+
+
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(ts(CO[which(time(CO)==anioi2):length(CO)],start=c(anioi2,1),frequency=12),col="royalblue1",xaxt="n",xlab="",ylab="",main="Log-CO, periodo 2008-2017")
+lines(ts(mod_dlm_filter$m[(which(time(CO)==2008)+1):length(CO),1],start=c(anioi2,1),frequency=12),col="firebrick1",lty=2,lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.7,cex.lab=0.8)
+
+leyenda<-c("Observado","Filtrado")
+legend("topright",leyenda,col=c('royalblue1','firebrick1'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.5)
+
+@
+
+\end{frame}
+
+
+  % ######## Diapositiva 10#########
+\begin{frame}{Suavizado}
+
+<<Suavizado, echo=FALSE, cache=TRUE, dependson=c('datos','Filtrado')>>=
+
+# Estimamos la serie suavizada 
+mod_dlm_smooth<-dlmSmooth(CO,mod_dlm)
+
+@
+
+<<Grafica_Estados_Suavizado,echo=FALSE, cache=TRUE, dependson=c('datos','Suavizado'), fig.pos='H',fig.widht=10,fig.height=3>>=
+
+# Graficamos el suavizado.
+# Nota: La salida "s" contiene los valores suavizados para el vector de estados 
+# la serie empieza una unidad antes de la primer observación. 
+par(mfrow=c(1,3))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(ts(mod_dlm_smooth$s[-1,1],start=c(anioi,mesi),frequency=12),col="olivedrab",xaxt='n',xlab="",ylab="",lwd=2,main="Nivel Log-CO Suavizado")
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_smooth$s[-1,2],start=c(anioi,mesi),frequency=12),col="olivedrab",xaxt='n',xlab="",ylab="",main="Pendiente Log-CO Suavizado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+plot(ts(mod_dlm_smooth$s[-1,3],start=1995,frequency=12),col="olivedrab",xaxt='n',xlab="",ylab="",main="Estacionalidad Log-CO Suavizado",lwd=2)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+@
+
+\begin{itemize}
+  \item Las tres series tienen menor variabilidad que las series filtradas pues toman en cuenta los valores futuros de la serie.
+\end{itemize}
+
+\end{frame}
+
+  % ######## Diapositiva 10#########
+\begin{frame}{Suavizado}
+
+<<Grafica_SerievsSuavizado, echo=FALSE, cache=TRUE, dependson=c('datos','Suavizado'),fig.pos='H',fig.widht=7,fig.height=3.5>>=
+
+par(mfrow=c(1,2))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(CO,col="royalblue1",xaxt="n",xlab="",ylab="",main="Log-CO")
+lines(ts(mod_dlm_smooth$s[-1,1],start=c(anioi,mesi),frequency=12),col="olivedrab",lty=2,lwd=3)
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.7,cex=0.8)
+
+leyenda<-c("Observado","Suavizado")
+legend("topright",leyenda,col=c('royalblue1','olivedrab'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3)
+
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(ts(CO[which(time(CO)==anioi2):length(CO)],start=c(anioi2,1),frequency=12),col="royalblue1",xaxt='n',xlab="",ylab="",main="Log-CO, periodo 2008-2017")
+lines(ts(mod_dlm_smooth$s[(which(time(CO)==anioi2)+1):length(CO),1],start=c(anioi2,1),frequency=12),col="olivedrab",lty=2,lwd=3)
+axis(1,anioi2:(aniof+1),paste("ene-",anioi2:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.7)
+
+leyenda<-c("Observado","Suavizado")
+legend("topright",leyenda,col=c('royalblue1','olivedrab'),lwd=c(1,2),lty=c(1,2),ncol=1,bg="white",seg.len=3,cex=0.8)
+
+@
+
+\end{frame}
+
+  % ######## Diapositiva 10#########
+\begin{frame}{Predicción}
+
+\begin{itemize}
+  \item Se realiza la predicción para los siguientes 2 años (24 observaciones) y se simulan 1000 trayectorias.
+  \item Parece que un mayor número de trayectorias quedan fuera del intervalo de confianza para el nivel que para los otros dos estados.
+  \item Los intervalos de confianza para la pendiente y estacionalidad son más angostos que para el nivel. 
+  \item Los valores pronosticados para los tres estados parecen continuar de manera razonable con la trayectoria de las series filtradas.
+\end{itemize}
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Predicción}
+<<Prediccion,echo=FALSE, cache=TRUE, dependson=c('Filtrado')>>=
+
+# Fijamos la semilla
+set.seed(34575)
+
+# Hacemos el pronóstico a dos años y pedimos 1000 trayectorias.
+mod_dlm_forecast<-dlmForecast(mod_dlm_filter,nAhead=24,sampleNew=1000)
+
+@
+
+<<Grafica_Estados_Prediccion,echo=FALSE, cache=TRUE, dependson=c('datos','Prediccion'),fig.pos='H',fig.widht=10,fig.height=3.2>>=
+
+# Graficamos lasp predicciones.
+# Nota: La salida "s" contiene los valores suavizados para el vector de estados 
+# la serie empieza una unidad antes de la primer observación. 
+par(mfrow=c(1,3))
+par(mar=c(4.1,3.1,1.6,1.1))
+
+sqrtR<- sapply(mod_dlm_forecast$R, function(x) sqrt(x[1,1]))
+pl<- mod_dlm_forecast$a[,1] + qnorm(0.05, sd= sqrtR)
+pu<- mod_dlm_forecast$a[,1] + qnorm(0.95, sd= sqrtR)
+
+plot(ts(c(mod_dlm_filter$m[-1,1],rep(NA,24)),start=anioi,frequency=12),col="firebrick1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-1.4,0.5),lwd=1,main="Nivel Log-CO Predicción")
+invisible(lapply(mod_dlm_forecast$newStates,function(x)
+  lines(x[,1],col="gray90",pch=4)))
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$a[,1]),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray80')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topleft",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3)
+
+
+sqrtR<- sapply(mod_dlm_forecast$R, function(x) sqrt(x[2,2]))
+pl<- mod_dlm_forecast$a[,2] + qnorm(0.05, sd= sqrtR)
+pu<- mod_dlm_forecast$a[,2] + qnorm(0.95, sd= sqrtR)
+
+plot(ts(c(mod_dlm_filter$m[-1,2],rep(NA,24)),start=1995,frequency=12),col="firebrick1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-0.1,0.1),main="Pendiente Log-CO Predicción",lwd=1)
+invisible(lapply(mod_dlm_forecast$newStates,function(x)
+  lines(x[,2],col="gray90",pch=4)))
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$a[,2]),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray80')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topleft",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3)
+
+
+
+sqrtR<- sapply(mod_dlm_forecast$R, function(x) sqrt(x[3,3]))
+pl<- mod_dlm_forecast$a[,3] + qnorm(0.05, sd= sqrtR)
+pu<- mod_dlm_forecast$a[,3] + qnorm(0.95, sd= sqrtR)
+
+plot(ts(c(mod_dlm_filter$m[-1,3],rep(NA,24)),start=1995,frequency=12),col="firebrick1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-0.2,0.4),main="Estacionalidad Log-CO Predicción",lwd=1,cex.main=0.85)
+invisible(lapply(mod_dlm_forecast$newStates,function(x)
+  lines(x[,3],col="gray90",pch=4)))
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$a[,3]),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray20')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topleft",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3)
+
+@
+
+\end{frame}
+
+  % ######## Diapositiva 10#########
+\begin{frame}{Predicción}
+
+\begin{itemize}
+  \item Se puede apreciar que el pronóstico mantiene bien la estacionalidad de la serie y es acorde a la tendencia que presentaba la serie.
+\end{itemize}
+
+<<Grafica_SerievsPrediccion,echo=FALSE,cache=TRUE, dependson=c('datos','Prediccion'),fig.pos='H',fig.widht=10,fig.height=2.5>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+sqrtQ<- sapply(mod_dlm_forecast$Q, function(x) sqrt(x[1,1]))
+pl<- mod_dlm_forecast$f[,1] + qnorm(0.05, sd= sqrtQ)
+pu<- mod_dlm_forecast$f[,1] + qnorm(0.95, sd= sqrtQ)
+
+plot(CO,col="royalblue1",xaxt='n',xlab="",ylab="",xlim=c(anioi2,aniof+3),ylim=c(-1.5,0.5),lwd=1,main="Log-Monóxido de Carbono")
+invisible(lapply(mod_dlm_forecast$newObs,function(x)
+  lines(x[,1],col="gray90",pch=4)))
+lines(ts(mod_dlm_filter$m[-1,1],start=c(anioi,mesi),frequency=12),col="firebrick1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),mod_dlm_forecast$f),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,nrow(mod_dlm_filter$m)-1),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=2018,lty=2,col='gray20')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.6,cex.lab=0.8)
+leyenda<-c('Observada','Filtrada','Predicción','IC 95%')
+legend("bottomleft",leyenda,col=c('royalblue1','firebrick1','darkgoldenrod1','purple'),lwd=c(1,2,2,2),lty=c(1,1,2,2),ncol=1,bg="white",seg.len=3,cex=0.5)
+
+@
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{Análisis de Residuales}
+
+\begin{itemize}
+\item Se obtienen los residuales del modelo DLM estimado; éstos fluctúan al rededor del cero y parecen tener varianza constante. \\
+\end{itemize}
+
+<<Residuales_DLM, echo=FALSE, cache=TRUE, dependson=c('Filtro')>>=
+
+# Se obtienen los residuales 
+dlm_resids<-residuals(mod_dlm_filter,sd=FALSE)
+
+@ 
+
+<<Grafica_Residuales,echo=FALSE,cache=TRUE, dependson=c('Residuales_DLM'),fig.pos='H',fig.widht=10,fig.height=2.5>>=
+
+par(mar=c(4.1,3.1,1.6,1.1))
+
+plot(dlm_resids,col='lightblue',lwd=2,main='Residuales del DLM',xaxt='n',xlab="",ylab="")
+axis(1,anioi:(aniof+1),paste("ene-",anioi:(aniof+1),sep=""),hadj=1,las=2,cex.axis=0.8)
+
+@ 
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Análisis de Residuales: Prueba LJung-Box}
+
+\setlength\belowcaptionskip{0pt}
+<<BoxTest_Residuales,echo=FALSE,cache=TRUE, dependson=c('Residuales_DLM'),results='asis'>>=
+
+BoxTest_Resid_DLM<-data_frame(Rezago=1:20,Valor.p=sapply(1:20,function(i) Box.test(dlm_resids,lag=i,type="Ljung-Box")$p.value))# si estàn autocorrelacionados
+             
+BoxTest_Resid_DLM_tabla<-BoxTest_Resid_DLM
+BoxTest_Resid_DLM_tabla$Valor.p<-digitos(BoxTest_Resid_DLM_tabla$Valor.p,nDigits=6)
+
+BoxTest_Resid_DLM_tabla<-xtable(BoxTest_Resid_DLM_tabla,caption="Prueba Ljung-Box Residuales",label="tabla:LjungBoxResidDLM")
+
+# Se alínean las columnas 
+align(BoxTest_Resid_DLM_tabla)<-"lrr"
+
+print(BoxTest_Resid_DLM_tabla[1:12,],print.placement='H',NA.string="",latex.environments="center",include.rownames=FALSE,include.colnames =TRUE, caption.placement="top",floating = TRUE, hline.after=c(-1,0,nrow(BoxTest_Resid_DLM_tabla[1:12,])),scalebox=0.85,sanitize.text.function = function(x) x)
+@
+\begin{itemize}
+  \item En todos los casos se rechaza la hipótesis nula de no correlación de los residuales
+\end{itemize}
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Análisis de Residuales: Histograma y Q-Q plot}
+
+\begin{itemize}
+  \item  Los residuales sí parecen tener una forma de normal.
+\end{itemize}
+
+<<Hist-QQPlot_Resids_DLM,echo=FALSE,cache=TRUE, dependson=c('Residuales_DLM'),fig.pos='H',fig.widht=10,fig.height=2.5>>=
+
+par(mfrow=c(1,3))
+par(mar=c(4.1,4.1,1.6,2.1))
+
+hist(dlm_resids,prob=TRUE,col="lightblue",breaks=25,main='Residuales del DLM')
+lines(density(dlm_resids),lwd=2,col="darkblue")
+
+set.seed(2454)
+norm.sim<- rnorm(length(dlm_resids),sd=sd(dlm_resids))
+hist(norm.sim, prob=TRUE, col="lightblue", breaks = 25, main= "Normal Simulada",xlab="Valores Simulados")
+lines(density(norm.sim), lwd=2,col='darkblue')
+  
+qqplot(norm.sim,dlm_resids,main='Normal Simulada vs Residuales',xlab='Normal Simulada',ylab='Residuales')
+abline(a=0,b=1,col="red")
+
+@
+
+\end{frame}
+
+
+% ######## Diapositiva 10#########
+\begin{frame}{ECM Para Predicciones}
+
+<<dlm_predicciones_ECM,echo=FALSE, cache=TRUE, dependson=c('datos','prediccion')>>=
+
+# Volvemos a correr todo pero sólo para el 80% de la muestra 
+# Agregamos un DLM polinomial y un DLM estacional 
+dlm_CO<-dlmModPoly(2,dW=c(1,1),dV=1) + dlmModSeas(12, dV = 0)
+
+# Creamos la función para encontrar los parametros maximo verosimiles
+buildFun<-function(param){
+  
+  diag(W(dlm_CO))[1:3]<-exp(param[1:3])
+  V(dlm_CO)<-exp(param[4])
+  return(dlm_CO)
+
+  }
+
+# Encontramos los parametros maximo verosimiles
+fit<-dlmMLE(CO.80, parm=rep(0,4),build=buildFun)
+
+# Checamos convergencia 
+conver<-paste("Convergencia", fit$convergence==0)
+
+# Sacamos laexpoenncial a los estimadores encontrados de V y W.
+mod_dlm<-buildFun(fit$par)
+
+# Enseñamos los parametros estimados
+V_MVE<-buildFun(fit$par)[c("V","W")]$V
+W_MVE<-buildFun(fit$par)[c("V","W")]$W
+
+# Filtramos
+mod_dlm_filter<-dlmFilter(CO.80,mod_dlm)
+
+
+# Predecimos para el ultimo 20%
+mod_dlm_forecast<-dlmForecast(mod_dlm_filter,nAhead=length(CO.20))
+
+ECM_dlm<-mean((CO.20-mod_dlm_forecast$f)^2)
+@
+
+\begin{itemize}
+  \item Se reserva el 20\% final de la muestra para evaluar el ECM de las predicciones del DLM. 
+  \item El modelo está sobrestimando, pero todas las observaciones quedaron dentro del IC.
+  \item El ECM para este modelo es de \Sexpr{round(ECM_dlm,4)}.
+\end{itemize}
+
+<<Grafica_SerievsPrediccion_ECM, echo=FALSE, cache=TRUE, dependson=c('prediccion','dlm_predicciones_ECM'),fig.pos='H',fig.widht=10,fig.height=2.5>>=
+
+par(mfrow=c(1,1))
+par(mar=c(4.1,3.1,1.6,1.1))
+sqrtQ<- sapply(mod_dlm_forecast$Q, function(x) sqrt(x[1,1]))
+pl<- mod_dlm_forecast$f[,1] + qnorm(0.05, sd= sqrtQ)
+pu<- mod_dlm_forecast$f[,1] + qnorm(0.95, sd= sqrtQ)
+
+plot(CO,col="royalblue1",xaxt='n',xlab="",ylab="",xlim=c(anioi,aniof+1),ylim=c(-1.5,1.5),lwd=1,main="Log-Monóxido de Carbono",cex.main=0.8)
+lines(ts(c(rep(NA,length(CO.80)),mod_dlm_forecast$f),start=c(anioi,1),frequency=12),col="darkgoldenrod1",lwd=2)
+lines(ts(c(rep(NA,length(CO.80)),pl),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+lines(ts(c(rep(NA,length(CO.80)),pu),start=c(anioi,1),frequency=12),col="purple",lty=2,lwd=1)
+abline(v=time(CO)[length(CO.80)],lty=2,col='gray20')
+axis(1,anioi:(aniof+3),paste("ene-",anioi:(aniof+3),sep=""),hadj=1,las=2,cex.axis=0.6,cex.lab=0.8)
+leyenda<-c('Observada','Predicción','IC 95%')
+legend("topright",leyenda,col=c('royalblue1','darkgoldenrod1','purple'),lwd=c(1,2,2),lty=c(1,1,2),ncol=1,bg="white",seg.len=3,cex=0.5)
+
+@
+
+\end{frame}
+
+
+\section{Comparación de Modelos}
+
+% ######## Diapositiva 10#########
+\begin{frame}{Comparación de modelos}
+
+\setlength\belowcaptionskip{0pt}
+\begin{table}[H]
+\centering
+\caption{Comparación entre el modelo clásico y el DLM}
+\begin{tabular}{l|c|c}
+\hline
+& $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ & DLM (n=2 + Est.)\\
+\hline
+Ajuste & ${\color{green}\checkmark}$ & ${\color{green}\checkmark}$\\
+No correl. residuales & ${\color{green}\checkmark}$ & ${\color{red}\boldsymbol{\times}}$\\
+Residuales Normales & ${\color{green}\checkmark}$  & ${\color{green}\checkmark}$ \\
+ECM Predicciones & \Sexpr{round(result2$ECM[5],4)}  & \Sexpr{round(ECM_dlm,4)}\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+  \item El modelo clásico pasa todas las pruebas de validación mientras que el DLM tiene errores autocorrelacionados. 
+  \item El modelo clásico tiene mayor ECM para el pronóstico del útimo 20\% de la muestra que el DLM, aunque la diferencia entre ambos es mínima. 
+\end{itemize}
+\end{frame}
+
+\section{Conclusiones}
+
+% ######## Diapositiva 10#########
+\begin{frame}[allowframebreaks]{Consideraciones Finales}
+
+\begin{itemize}
+  \item En este trabajo se utilizaron modelos clásicos y modelos Dinámicos Lineales para ajustar y estimar un modelo para el logaritmo del promedio mensual del Monóxido de Carbono (Log-CO) en la Ciudad de México. 
+  \item La serie Log-CO presenta tendencia decreciente y estacionalidad. 
+  \item Dentro de los modelos clásicos se realizó una búsqueda en grid con código en paralelo para distintas combinaciones de los parámetros de un SARIMA(p,d,q)(P,D,Q$)_s$. 
+  \begin{itemize}
+    \item Se estimaron \Sexpr{nrow(result)} modelos.
+    \item Se compararon los 5 modelos con menor AIC. 
+    \item Únicamente 2 de los 5 modelos pasaron todas las pruebas de diagnóstico.
+    \item Los 5 modelos tienen un ECM pequeño (\Sexpr{round(mean(result2$ECM),4)} aprox.)
+    \item Se eligió el modelo $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ como el mejor modelo clásico.
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+% ######## Diapositiva 10#########
+\begin{frame}[allowframebreaks]{Consideraciones Finales}
+
+\begin{itemize}
+  \item Para el DLM se utilizó un modelo polinomial de orden 2 con estacionalidad.
+  \begin{itemize}
+    \item Las matrices de varianzas y covarianzas se estimaron vía Máxima Verosimilitud. 
+    \item Se obutvo el filtrado, suavizado y predicciones (a 24 meses) para la serie del Log-CO. 
+    \item Los residuales del modelo pasan todas las pruebas de diagnósticos excepto la de autocorrelación. 
+    \item El modelo tiene un ECM de \Sexpr{round(ECM_dlm,4)}. 
+  \end{itemize}
+  \item Entre el modelo $SARIMA(\Sexpr{result$p[5]},\Sexpr{result$d[5]},\Sexpr{result$q[5]})X(\Sexpr{result$P[5]},\Sexpr{result$D[5]},\Sexpr{result$Q[5]})_{\Sexpr{result$s[5]}}$ y el DLM polinomial con estacionalidad se eligió el modelo clásico para ajustar el Log-CO. 
+\end{itemize}
+
+\end{frame}
+
+
+\contraportada
+
+
+\end{document}
